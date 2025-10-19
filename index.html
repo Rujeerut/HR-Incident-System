@@ -1,16 +1,30 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//script.google.com">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
   <title>HR Incident Reporting System - BJC Big C</title>
+  
   <!-- Tailwind via CDN (works on GitHub Pages) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Fonts: Mitr primary, Prompt fallback -->
  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    .skeleton {
+  position: relative; overflow: hidden; background: #f3f4f6;
+}
+.skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+  animation: loading 1.2s infinite;
+}
+@keyframes loading { to { transform: translateX(100%); } }
     .card-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -25,7 +39,9 @@
       --brand-purple-600:#7c3aed; /* tailwind purple-600 */
       --brand-pink-600:#db2777; /* tailwind pink-600 */
     }
-    html, body { font-family: 'Mitr', 'Prompt', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    html, body {
+  font-family: 'Prompt', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
 
     /* Custom step styles */
     .step-indicator { transition: all .25s ease; }
@@ -534,49 +550,106 @@
       else if (page === 'dashboard') document.getElementById('dashboardPage').classList.remove('hidden');
     }
 
+    // === CACHE CONFIG ===
+  const CATEGORY_CACHE_KEY = 'hrir_categories_v1';
+  const CATEGORY_TTL_MS = 5 * 60 * 1000; // 5 นาที
+  let categoryMemCache = null;
+
+  function getCachedCategories() {
+    if (categoryMemCache) return categoryMemCache;
+    try {
+      const raw = localStorage.getItem(CATEGORY_CACHE_KEY);
+      if (!raw) return null;
+      const { ts, rows } = JSON.parse(raw);
+      if (!ts || !rows) return null;
+      if (Date.now() - ts > CATEGORY_TTL_MS) return null;
+      categoryMemCache = rows;
+      return rows;
+    } catch { return null; }
+  }
+  function setCachedCategories(rows) {
+    categoryMemCache = rows;
+    try { localStorage.setItem(CATEGORY_CACHE_KEY, JSON.stringify({ ts: Date.now(), rows })); } catch {}
+  }
+
+  function renderCategorySkeleton() {
+    const grid = document.getElementById('categoryGrid');
+    grid.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < 8; i++) {
+      const s = document.createElement('div');
+      s.className = 'rounded-xl shadow-lg px-6 py-6 border border-gray-100 skeleton';
+      s.style.height = '92px';
+      frag.appendChild(s);
+    }
+    grid.appendChild(frag);
+  }
+
+  function renderCategories(rows) {
+    const grid = document.getElementById('categoryGrid');
+    grid.innerHTML = '';
+    const palette = ['blue','orange','yellow','purple','pink','green','indigo'];
+    const frag = document.createDocumentFragment();
+    rows.forEach((cat, i) => {
+      const tone = palette[i % palette.length];
+      const btn = document.createElement('button');
+      btn.className = `card-hover bg-gradient-to-br from-white to-${tone}-50 rounded-xl shadow-lg px-6 py-6 border border-${tone}-100 hover:border-${tone}-300 hover:shadow-xl text-left transition-all duration-200`;
+      btn.innerHTML = `
+        <div class="text-center">
+          <h3 class="text-base font-bold text-gray-800 mb-1">${escapeHTML_(cat.th)}</h3>
+          <p class="text-xs text-gray-600">${escapeHTML_(cat.en || '')}</p>
+        </div>`;
+      btn.onclick = () => selectCategory(cat);
+      frag.appendChild(btn);
+    });
+    grid.appendChild(frag);
+  }
+    
     // ===== Dynamic Categories from Case_Master M/N =====
     async function loadCategories(){
-      const grid = document.getElementById('categoryGrid');
-      const loading = document.getElementById('categoryLoading');
-      const errorBox = document.getElementById('categoryError');
+  const grid = document.getElementById('categoryGrid');
+  const loading = document.getElementById('categoryLoading');
+  const errorBox = document.getElementById('categoryError');
+      
       loading.classList.remove('hidden');
-      errorBox.classList.add('hidden');
-      grid.innerHTML = '';
+  errorBox.classList.add('hidden');
+      
+      const cached = getCachedCategories();
+  if (cached && cached.length) {
+    renderCategories(cached);
+    loading.classList.add('hidden');
+  } else {
+    renderCategorySkeleton();
+  }
 
-      try{
-        const rs = await apiGet({ action:'categories' });
-        if(!rs.ok) throw new Error(rs.error || 'โหลดหมวดหมู่ไม่สำเร็จ');
-        const rows = rs.rows || [];
+      const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-        if (rows.length === 0){
-          loading.classList.add('hidden');
-          errorBox.textContent = 'ไม่พบหมวดหมู่ใน Case_Master (คอลัมน์ M/N)';
-          errorBox.classList.remove('hidden');
-          return;
-        }
+       try{
+    const url = API_URL + '?' + new URLSearchParams({ action:'categories' }).toString();
+    const res = await fetch(url, { method:'GET', signal: controller.signal, cache:'no-cache' });
+    clearTimeout(timeoutId);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rs = await res.json();
+    if(!rs.ok) throw new Error(rs.error || 'โหลดหมวดหมู่ไม่สำเร็จ');
+    const rows = rs.rows || [];
+    if(!rows.length) throw new Error('ไม่พบหมวดหมู่ใน Case_Master (คอลัมน์ M/N)');
 
-        const palette = ['blue','orange','yellow','purple','pink','green','indigo'];
-
-        rows.forEach((cat, i) => {
-          const tone = palette[i % palette.length];
-          const btn = document.createElement('button');
-        btn.className = `card-hover bg-gradient-to-br from-white to-${tone}-50 rounded-xl shadow-lg px-6 py-6 border border-${tone}-100 hover:border-${tone}-300 hover:shadow-xl text-left transition-all duration-200`;
-          btn.innerHTML = `
-  <div class="text-center">
-    <h3 class="text-base font-bold text-gray-800 mb-1">${escapeHTML_(cat.th)}</h3>
-    <p class="text-xs text-gray-600">${escapeHTML_(cat.en || '')}</p>
-  </div>
-`;
-          btn.onclick = () => selectCategory(cat); // ส่งทั้งอ็อบเจ็กต์
-          grid.appendChild(btn);
-        });
-      }catch(err){
-        errorBox.textContent = String(err.message || err);
-        errorBox.classList.remove('hidden');
-      }finally{
-        loading.classList.add('hidden');
-      }
+    const needRerender = JSON.stringify(rows) !== JSON.stringify(cached || []);
+    if (needRerender) {
+      renderCategories(rows);
+      setCachedCategories(rows);
     }
+    loading.classList.add('hidden');
+  }catch(err){
+    clearTimeout(timeoutId);
+    if (!cached || !cached.length) {
+      errorBox.textContent = (err.name==='AbortError') ? 'การเชื่อมต่อช้า โปรดลองใหม่' : String(err.message || err);
+      errorBox.classList.remove('hidden');
+      loading.classList.add('hidden');
+    }
+  }
+}
 
     function escapeHTML_(s){
       return String(s || '')
