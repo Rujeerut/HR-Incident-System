@@ -593,10 +593,10 @@
     rows.forEach((cat, i) => {
       const tone = palette[i % palette.length];
       const btn = document.createElement('button');
-      btn.className = `card-hover bg-gradient-to-br from-white to-${tone}-50 
-      rounded-xl shadow-lg px-6 py-6 border border-${tone}-100 
-      hover:border-${tone}-300 hover:shadow-xl text-left 
-      transition-all duration-200 min-h-[120px] flex flex-col justify-center `;
+      btn.className = `card-hover bg-gradient-to-br from-white to-${tone}-50
+  rounded-xl shadow-lg px-6 py-6 border border-${tone}-100
+  hover:border-${tone}-300 hover:shadow-xl text-left
+  transition-all duration-200 h-[130px] flex flex-col justify-center`;
       btn.innerHTML = `
         <div class="text-center">
           <h3 class="text-base font-bold text-gray-800 mb-1">${escapeHTML_(cat.th)}</h3>
@@ -609,44 +609,46 @@
   }
     
     // ===== Dynamic Categories from Case_Master M/N =====
-    async function loadCategories(){
+    async function loadCategories(opts = {}){
+  const silent = !!opts.silent;
   const grid = document.getElementById('categoryGrid');
   const loading = document.getElementById('categoryLoading');
   const errorBox = document.getElementById('categoryError');
-      
-      loading.classList.remove('hidden');
-  errorBox.classList.add('hidden');
-      
-      const cached = getCachedCategories();
+
+  if(!silent){
+    loading.classList.remove('hidden');
+    errorBox.classList.add('hidden');
+  }
+
+  const cached = getCachedCategories();
   if (cached && cached.length) {
     renderCategories(cached);
-    loading.classList.add('hidden');
-  } else {
+    if(!silent) loading.classList.add('hidden');
+  } else if(!silent){
     renderCategorySkeleton();
   }
 
-      const controller = new AbortController();
+  const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-       try{
+  try{
     const url = API_URL + '?' + new URLSearchParams({ action:'categories' }).toString();
     const res = await fetch(url, { method:'GET', signal: controller.signal, cache:'no-cache' });
     clearTimeout(timeoutId);
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const rs = await res.json();
     if(!rs.ok) throw new Error(rs.error || 'โหลดหมวดหมู่ไม่สำเร็จ');
+
     const rows = rs.rows || [];
     if(!rows.length) throw new Error('ไม่พบหมวดหมู่ใน Case_Master (คอลัมน์ M/N)');
 
-    const needRerender = JSON.stringify(rows) !== JSON.stringify(cached || []);
-    if (needRerender) {
-      renderCategories(rows);
-      setCachedCategories(rows);
-    }
-    loading.classList.add('hidden');
+    renderCategories(rows);
+    setCachedCategories(rows);
+
+    if(!silent) loading.classList.add('hidden');
   }catch(err){
     clearTimeout(timeoutId);
-    if (!cached || !cached.length) {
+    if(!silent){
       errorBox.textContent = (err.name==='AbortError') ? 'การเชื่อมต่อช้า โปรดลองใหม่' : String(err.message || err);
       errorBox.classList.remove('hidden');
       loading.classList.add('hidden');
@@ -659,8 +661,17 @@
         .replace(/&/g,'&amp;').replace(/</g,'&lt;')
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
     }
-   
     
+    function showLoading(text='กำลังโหลด...'){
+  const m = document.getElementById('loadingModal');
+  const t = document.getElementById('loadingText');
+  if(t) t.textContent = text;
+  m.classList.remove('hidden');
+}
+function hideLoading(){
+  document.getElementById('loadingModal').classList.add('hidden');
+}
+   
     // ===== Employee login (for proceeding to details) =====
     function showEmployeeLogin(){ document.getElementById('employeeModal').classList.remove('hidden'); }
     function closeEmployeeModal(){ document.getElementById('employeeModal').classList.add('hidden'); }
@@ -781,22 +792,47 @@
       btn.textContent = el.readOnly ? 'แก้ไข' : 'บันทึก';
     }
 
-    function nextStep(){
-      const ids = ['introStep','categoryStep','subCategoryStep','detailsStep','successStep'];
-      document.getElementById(ids[currentStep-1]).classList.add('hidden');
-      if(currentStep <= 4){
-        const step = document.getElementById(`step${currentStep}`);
-        step.classList.remove('active');
-        step.classList.add('completed');
-      }
-      currentStep++;
-      document.getElementById(ids[currentStep-1]).classList.remove('hidden');
-      if(currentStep <= 4){ document.getElementById(`step${currentStep}`).classList.add('active'); }
-      if(currentStep === 2){ // load categories screen
-        document.getElementById('categoryStep').classList.remove('hidden');
-        loadCategories(); // ← ดึงข้อมูลจากชีต Case_Master
-      }
-    }
+    async function nextStep(){
+  const ids = ['introStep','categoryStep','subCategoryStep','detailsStep','successStep'];
+
+  // ซ่อน section ปัจจุบัน + อัปเดตตัวชี้ขั้นตอน
+  document.getElementById(ids[currentStep-1]).classList.add('hidden');
+  if(currentStep <= 4){
+    const step = document.getElementById(`step${currentStep}`);
+    step.classList.remove('active');
+    step.classList.add('completed');
+  }
+  currentStep++;
+
+  // ถ้าไม่ใช่การเข้าสtep 2 ก็แสดงตามปกติ
+  if (currentStep !== 2){
+    document.getElementById(ids[currentStep-1]).classList.remove('hidden');
+    if(currentStep <= 4){ document.getElementById(`step${currentStep}`).classList.add('active'); }
+    return;
+  }
+
+  // === เข้าสtep 2: โหลดหมวดหมู่แบบมี popup ===
+  document.getElementById(`step${currentStep}`).classList.add('active');
+
+  // ยัง "ไม่" เปิด categoryStep เพื่อไม่ให้พื้นหลังโชว์ก่อน
+  document.getElementById('categoryStep').classList.add('hidden');
+
+  // เปิด popup โหลด
+  showLoading('กำลังโหลดประเภทการแจ้ง...');
+
+  // โหลดข้อมูล + render การ์ด (แบบเงียบ ไม่แตะ loader บนหน้า)
+  await loadCategories({ silent:true });
+
+  // ปิด popup แล้วโชว์ section พร้อม effect เผยทั้งชุด
+  hideLoading();
+  const section = document.getElementById('categoryStep');
+  section.classList.remove('hidden');
+  section.classList.add('opacity-0');
+  requestAnimationFrame(()=>{
+    section.classList.add('transition-opacity','duration-300');
+    section.classList.remove('opacity-0');
+  });
+}
 
     function goBack(){
       if(currentStep === 4){
@@ -965,5 +1001,18 @@
     // ===== Init =====
     showPage('report');
   </script>
+  <!-- Loading Modal -->
+<div id="loadingModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] hidden">
+  <div class="w-full h-full flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-2xl px-6 py-5 flex items-center gap-3">
+      <svg class="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="4"></path>
+      </svg>
+      <span id="loadingText" class="font-semibold text-gray-800">กำลังโหลดประเภทการแจ้ง...</span>
+    </div>
+  </div>
+</div>
+  
 </body>
 </html>
