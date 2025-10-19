@@ -782,12 +782,37 @@ function renderSubCategoryCards(rows){
     // ===== Employee login (for proceeding to details) =====
     function showEmployeeLogin(){ document.getElementById('employeeModal').classList.remove('hidden'); }
     function closeEmployeeModal(){ document.getElementById('employeeModal').classList.add('hidden'); }
-    function verifyEmployee(e){
-      e.preventDefault();
-      const id = document.getElementById('employeeId').value.trim();
-      if (id === '1234'){ closeEmployeeModal(); proceedToDetails(); }
-      else alert('รหัสพนักงานไม่ถูกต้อง กรุณาลองใหม่');
+    async function verifyEmployee(e){
+  e.preventDefault();
+  const id = document.getElementById('employeeId').value.trim();
+  if(!id) return alert('กรุณากรอกรหัสพนักงาน');
+
+  showLoading('กำลังตรวจสอบรหัสพนักงาน...');
+  try {
+    const res = await fetch(API_URL + '?action=employee&empId=' + encodeURIComponent(id));
+    const rs = await res.json();
+    hideLoading();
+
+    if (!rs.ok) {
+      alert('ไม่พบข้อมูลพนักงาน: ' + (rs.error || ''));
+      return;
     }
+
+    const emp = rs.data || {};
+    // เติมข้อมูลลงในฟอร์มผู้แจ้ง
+    document.getElementById('employeeName').value  = emp.name || '';
+    document.getElementById('employeeCode').value  = emp.empId || '';
+    document.getElementById('employeeDept').value  = emp.dept || '';
+    document.getElementById('employeePhone').value = emp.phone || '';
+    document.getElementById('assignedHRBP').value  = emp.hrbp || '';
+
+    closeEmployeeModal();
+    proceedToDetails();
+  } catch(err){
+    hideLoading();
+    alert('เกิดข้อผิดพลาดในการเชื่อมต่อระบบ\n' + err.message);
+  }
+}
 
     // ===== Category & Sub-category =====
        async function selectCategory(cat){
