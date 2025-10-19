@@ -7,17 +7,25 @@
   <title>HR Incident Reporting System - BJC Big C</title>
   <!-- Tailwind via CDN (works on GitHub Pages) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Fonts: Prompt -->
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Fonts: Mitr primary, Prompt fallback -->
+ <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    .card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+    
     :root {
-      --brand-blue-600:#2563eb;
-      --brand-blue-700:#1d4ed8;
-      --brand-purple-600:#7c3aed;
-      --brand-pink-600:#db2777;
+      --brand-blue-600:#2563eb; /* tailwind blue-600 */
+      --brand-blue-700:#1d4ed8; /* tailwind blue-700 */
+      --brand-purple-600:#7c3aed; /* tailwind purple-600 */
+      --brand-pink-600:#db2777; /* tailwind pink-600 */
     }
-    html, body { font-family: 'Prompt', sans-serif; }
+    html, body { font-family: 'Mitr', 'Prompt', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 
     /* Custom step styles */
     .step-indicator { transition: all .25s ease; }
@@ -85,6 +93,7 @@
 
     <!-- Step 1: Intro -->
     <section id="introStep" class="fade-in relative">
+      <!-- Cute floating background shapes -->
       <div class="absolute inset-0 overflow-hidden pointer-events-none">
         <div class="floating-element absolute top-10 left-10 w-12 h-12 bg-blue-200 rounded-full opacity-20"></div>
         <div class="floating-element absolute top-20 right-20 w-10 h-10 bg-purple-200 rounded-full opacity-30" style="animation-delay:1s"></div>
@@ -119,58 +128,21 @@
       </div>
     </section>
 
-    <!-- Step 2: Category selection -->
+   <!-- Step 2: Category selection (dynamic) -->
     <section id="categoryStep" class="hidden fade-in">
       <div class="text-center mb-4">
         <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">เลือกประเภทการแจ้ง</h2>
         <p class="text-sm text-gray-600">กรุณาเลือกประเภทเหตุการณ์ที่ต้องการแจ้ง</p>
       </div>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
-        <!-- Termination -->
-        <button class="card-hover bg-gradient-to-br from-white to-red-50 rounded-xl shadow-lg p-4 border border-red-100 hover:border-red-300 hover:shadow-xl text-left" onclick="selectCategory('termination')">
-          <div class="text-center">
-            <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-1">การเลิกจ้าง</h3>
-            <p class="text-xs text-gray-600">Termination</p>
-            <p class="text-xs text-gray-500">ลาออก, เลิกจ้าง, โอนย้าย</p>
-          </div>
-        </button>
-        <!-- Accident -->
-        <button class="card-hover bg-gradient-to-br from-white to-orange-50 rounded-xl shadow-lg p-4 border border-orange-100 hover:border-orange-300 hover:shadow-xl text-left" onclick="selectCategory('accident')">
-          <div class="text-center">
-            <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M5.062 19h13.876c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.33 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-1">อุบัติเหตุ</h3>
-            <p class="text-xs text-gray-600">Accident</p>
-            <p class="text-xs text-gray-500">บาดเจ็บ, อุบัติเหตุในโรงงาน</p>
-          </div>
-        </button>
-        <!-- Safety -->
-        <button class="card-hover bg-gradient-to-br from-white to-yellow-50 rounded-xl shadow-lg p-4 border border-yellow-100 hover:border-yellow-300 hover:shadow-xl text-left" onclick="selectCategory('safety')">
-          <div class="text-center">
-            <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-1">ความปลอดภัย</h3>
-            <p class="text-xs text-gray-600">Safety</p>
-            <p class="text-xs text-gray-500">อุปกรณ์ป้องกัน, มาตรฐานความปลอดภัย</p>
-          </div>
-        </button>
-        <!-- Complaint -->
-        <button class="card-hover bg-gradient-to-br from-white to-purple-50 rounded-xl shadow-lg p-4 border border-purple-100 hover:border-purple-300 hover:shadow-xl text-left" onclick="selectCategory('complaint')">
-          <div class="text-center">
-            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-1">การร้องเรียน</h3>
-            <p class="text-xs text-gray-600">Complaint</p>
-            <p class="text-xs text-gray-500">ข้อร้องเรียน, ข้อเสนอแนะ</p>
-          </div>
-        </button>
-      </div>
+
+      <!-- Loader -->
+      <div id="categoryLoading" class="text-center text-sm text-gray-600 mb-3">กำลังโหลดหมวดหมู่...</div>
+
+      <!-- Dynamic grid here -->
+      <div id="categoryGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto"></div>
+
+      <!-- Error -->
+      <div id="categoryError" class="hidden text-center text-red-600 text-sm mt-4"></div>
     </section>
 
     <!-- Step 3: Sub-category -->
@@ -334,8 +306,35 @@
           <h3 class="text-2xl font-bold text-gray-800">เคสล่าสุดของคุณ</h3>
           <button onclick="logoutHistory()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">ออกจากระบบ</button>
         </div>
-        <!-- renderer จะเติมการ์ดจริงลงในคอนเทนเนอร์นี้ -->
-        <div class="space-y-4"></div>
+        <div class="space-y-4">
+          <div class="bg-gradient-to-r from-red-50 to-red-100 rounded-xl p-6 border-l-4 border-red-500">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="text-lg font-bold text-gray-800 mb-2">HR-2025-001 - การเลิกจ้าง</h4>
+                <p class="text-gray-600 mb-2">ประเภท: ลาออก | วันที่: 19 ต.ค. 2025</p>
+                <p class="text-sm text-gray-500">รายละเอียด: พนักงานแผนกผลิตขอลาออกด้วยเหตุผลส่วนตัว</p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">รอดำเนินการ</span>
+                <button onclick="viewCaseHistory('HR-2025-001')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">ดูรายละเอียด</button>
+                <button onclick="closeCaseByEmployee('HR-2025-001')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">ปิดเคส</button>
+              </div>
+            </div>
+          </div>
+          <div class="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl p-6 border-l-4 border-orange-500">
+            <div class="flex justify-between items-start">
+              <div>
+                <h4 class="text-lg font-bold text-gray-800 mb-2">HR-2025-002 - อุบัติเหตุ</h4>
+                <p class="text-gray-600 mb-2">ประเภท: บาดเจ็บ | วันที่: 18 ต.ค. 2025</p>
+                <p class="text-sm text-gray-500">รายละเอียด: บาดเจ็บจากเครื่องจักรในแผนกผลิต</p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">เสร็จสิ้น</span>
+                <button onclick="viewCaseHistory('HR-2025-002')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">ดูรายละเอียด</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -344,7 +343,7 @@
   <section id="dashboardPage" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-10">
       <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2z"/></svg>
+        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
       </div>
       <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">Dashboard</h1>
       <p class="text-gray-600">ภาพรวมการแจ้งเหตุการณ์และสถิติทั้งหมด</p>
@@ -449,7 +448,7 @@
     </div>
   </div>
 
-  <!-- Case Detail Modal -->
+  <!-- Case Detail Modal (demo) -->
   <div id="caseModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div class="bg-white rounded-xl shadow-2xl p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between mb-6">
@@ -465,9 +464,9 @@
     </div>
   </div>
 
-  <!-- ========= API URL + HELPERS (เชื่อม Apps Script) ========= -->
   <script>
-    // 🔗 เปลี่ยนเป็น Web App URL (Deploy → Test deployments → /exec)
+     // ===== API CONFIG & HELPERS =====
+    // 🔗 เปลี่ยนเป็น Web App URL ของคุณ (ของ Apps Script ที่มี action=categories)
     const API_URL = 'https://script.google.com/macros/s/AKfycbz1whkbxKCJfjz1z0MxqFqeolY5nxvig0SV62QAi2Jz-CNjJRh9c0_ubxPIwzImu804Yw/exec';
 
     async function apiGet(params) {
@@ -476,7 +475,6 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     }
-
     async function apiPost(payload) {
       const res = await fetch(API_URL, {
         method:'POST',
@@ -486,13 +484,11 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     }
-  </script>
-
-  <!-- ========= APP SCRIPT / UI LOGIC ========= -->
-  <script>
     // ===== Global state =====
     let currentStep = 1;
     let selectedCategory = '';
+    let selectedCategoryTH = '';
+    let selectedCategoryEN = '';
     let selectedSubCategory = '';
     let currentPage = 'report';
     let isHRBPLoggedIn = false;
@@ -538,6 +534,57 @@
       else if (page === 'dashboard') document.getElementById('dashboardPage').classList.remove('hidden');
     }
 
+    // ===== Dynamic Categories from Case_Master M/N =====
+    async function loadCategories(){
+      const grid = document.getElementById('categoryGrid');
+      const loading = document.getElementById('categoryLoading');
+      const errorBox = document.getElementById('categoryError');
+      loading.classList.remove('hidden');
+      errorBox.classList.add('hidden');
+      grid.innerHTML = '';
+
+      try{
+        const rs = await apiGet({ action:'categories' });
+        if(!rs.ok) throw new Error(rs.error || 'โหลดหมวดหมู่ไม่สำเร็จ');
+        const rows = rs.rows || [];
+
+        if (rows.length === 0){
+          loading.classList.add('hidden');
+          errorBox.textContent = 'ไม่พบหมวดหมู่ใน Case_Master (คอลัมน์ M/N)';
+          errorBox.classList.remove('hidden');
+          return;
+        }
+
+        const palette = ['blue','orange','yellow','purple','pink','green','indigo'];
+
+        rows.forEach((cat, i) => {
+          const tone = palette[i % palette.length];
+          const btn = document.createElement('button');
+        btn.className = `card-hover bg-gradient-to-br from-white to-${tone}-50 rounded-xl shadow-lg px-6 py-6 border border-${tone}-100 hover:border-${tone}-300 hover:shadow-xl text-left transition-all duration-200`;
+          btn.innerHTML = `
+  <div class="text-center">
+    <h3 class="text-base font-bold text-gray-800 mb-1">${escapeHTML_(cat.th)}</h3>
+    <p class="text-xs text-gray-600">${escapeHTML_(cat.en || '')}</p>
+  </div>
+`;
+          btn.onclick = () => selectCategory(cat); // ส่งทั้งอ็อบเจ็กต์
+          grid.appendChild(btn);
+        });
+      }catch(err){
+        errorBox.textContent = String(err.message || err);
+        errorBox.classList.remove('hidden');
+      }finally{
+        loading.classList.add('hidden');
+      }
+    }
+
+    function escapeHTML_(s){
+      return String(s || '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+   
+    
     // ===== Employee login (for proceeding to details) =====
     function showEmployeeLogin(){ document.getElementById('employeeModal').classList.remove('hidden'); }
     function closeEmployeeModal(){ document.getElementById('employeeModal').classList.add('hidden'); }
@@ -549,18 +596,30 @@
     }
 
     // ===== Category & Sub-category =====
-    function selectCategory(category){
-      selectedCategory = category;
-      const names = { termination:'การเลิกจ้าง', accident:'อุบัติเหตุ', safety:'ความปลอดภัย', complaint:'การร้องเรียน' };
-      document.getElementById('subCategoryTitle').textContent = `เลือกประเภท${names[category]}`;
-      showSubCategories(category);
-      document.getElementById('categoryStep').classList.add('hidden');
-      document.getElementById('subCategoryStep').classList.remove('hidden');
-      document.getElementById('step2').classList.remove('active');
-      document.getElementById('step2').classList.add('completed');
-      document.getElementById('step3').classList.add('active');
-      currentStep = 3;
+        function selectCategory(cat){
+      // cat มาจาก API: { th, en, slug }
+      selectedCategory   = String(cat.slug || '').trim();
+      selectedCategoryTH = String(cat.th   || '').trim();
+      selectedCategoryEN = String(cat.en   || '').trim();
+
+      // ถ้า slug เข้ากับแมปเดิม (termination/accident/safety/complaint) → แสดง sub
+      if (subCategories[selectedCategory] && subCategories[selectedCategory].length){
+        document.getElementById('subCategoryTitle').textContent = `เลือกประเภทย่อยของ “${selectedCategoryTH || 'หมวดหมู่'}”`;
+        showSubCategories(selectedCategory);
+
+        document.getElementById('categoryStep').classList.add('hidden');
+        document.getElementById('subCategoryStep').classList.remove('hidden');
+        document.getElementById('step2').classList.remove('active');
+        document.getElementById('step2').classList.add('completed');
+        document.getElementById('step3').classList.add('active');
+        currentStep = 3;
+      } else {
+        // ถ้า slug ไม่ตรงหรือไม่มี sub → ข้ามไปรายละเอียด
+        selectedSubCategory = '';
+        showEmployeeLogin();
+      }
     }
+
     function showSubCategories(category){
       const container = document.getElementById('subCategoryCards');
       container.innerHTML = '';
@@ -577,34 +636,51 @@
 
     // ===== Details step =====
     function proceedToDetails(){
-      const names = { termination:'การเลิกจ้าง', accident:'อุบัติเหตุ', safety:'ความปลอดภัย', complaint:'การร้องเรียน' };
-      const icons = {
-        termination:'bg-gradient-to-br from-red-400 to-red-600',
-        accident:'bg-gradient-to-br from-orange-400 to-orange-600',
-        safety:'bg-gradient-to-br from-yellow-400 to-yellow-600',
-        complaint:'bg-gradient-to-br from-purple-400 to-purple-600'
-      };
-      const subData = (subCategories[selectedCategory]||[]).find(s=>s.id===selectedSubCategory);
-      const subName = subData? subData.name : '';
-      document.getElementById('formTitle').textContent = `รายละเอียด${names[selectedCategory]} - ${subName}`;
-      document.getElementById('formSubtitle').textContent = `กรุณากรอกข้อมูลเกี่ยวกับ${subName}ให้ครบถ้วน`;
-      const iconBox = document.getElementById('priorityIcon');
-      iconBox.className = `w-12 h-12 rounded-2xl mr-3 shadow-lg ${icons[selectedCategory]}`;
+  const icons = {
+    termination:'bg-gradient-to-br from-red-400 to-red-600',
+    accident:'bg-gradient-to-br from-orange-400 to-orange-600',
+    safety:'bg-gradient-to-br from-yellow-400 to-yellow-600',
+    complaint:'bg-gradient-to-br from-purple-400 to-purple-600',
+    default:'bg-gradient-to-br from-blue-400 to-blue-600'
+  };
 
-      // Date/time default in Asia/Bangkok
-      const now = new Date();
-      const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Bangkok' }).format(now); // yyyy-mm-dd
-      const timeStr = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12:false, timeZone:'Asia/Bangkok' }).format(now); // HH:mm
-      document.getElementById('reportDate').value = dateStr;
-      document.getElementById('reportTime').value = timeStr;
+  const subData = (selectedCategory && subCategories[selectedCategory])
+    ? subCategories[selectedCategory].find(s=>s.id===selectedSubCategory)
+    : null;
 
-      document.getElementById('subCategoryStep').classList.add('hidden');
-      document.getElementById('detailsStep').classList.remove('hidden');
-      document.getElementById('step3').classList.remove('active');
-      document.getElementById('step3').classList.add('completed');
-      document.getElementById('step4').classList.add('active');
-      currentStep = 4;
-    }
+  const catLabel = selectedCategoryTH || {
+    termination:'การเลิกจ้าง', accident:'อุบัติเหตุ',
+    safety:'ความปลอดภัย', complaint:'การร้องเรียน'
+  }[selectedCategory] || 'หมวดหมู่';
+
+  const subLabel = subData ? subData.name : '';
+
+  const formTitle = subLabel ? `รายละเอียด${catLabel} - ${subLabel}` : `รายละเอียด${catLabel}`;
+  document.getElementById('formTitle').textContent = formTitle;
+  document.getElementById('formSubtitle').textContent = subLabel
+    ? `กรุณากรอกข้อมูลเกี่ยวกับ${subLabel}ให้ครบถ้วน`
+    : `กรุณากรอกข้อมูลเกี่ยวกับ${catLabel}ให้ครบถ้วน`;
+
+  const iconBox = document.getElementById('priorityIcon');
+  const colorClass = icons[selectedCategory] || icons.default;
+  iconBox.className = `w-12 h-12 rounded-2xl mr-3 shadow-lg ${colorClass}`;
+
+  const now = new Date();
+  const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Bangkok' }).format(now);
+  const timeStr = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12:false, timeZone:'Asia/Bangkok' }).format(now);
+  document.getElementById('reportDate').value = dateStr;
+  document.getElementById('reportTime').value = timeStr;
+
+  document.getElementById('subCategoryStep').classList.add('hidden');
+  document.getElementById('categoryStep').classList.add('hidden');
+  document.getElementById('detailsStep').classList.remove('hidden');
+
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step2').classList.add('completed');
+  document.getElementById('step3').classList.add('completed');
+  document.getElementById('step4').classList.add('active');
+  currentStep = 4;
+}
 
     function goBackToCategory(){
       document.getElementById('subCategoryStep').classList.add('hidden');
@@ -640,8 +716,9 @@
       currentStep++;
       document.getElementById(ids[currentStep-1]).classList.remove('hidden');
       if(currentStep <= 4){ document.getElementById(`step${currentStep}`).classList.add('active'); }
-      if(currentStep === 2){
+      if(currentStep === 2){ // load categories screen
         document.getElementById('categoryStep').classList.remove('hidden');
+        loadCategories(); // ← ดึงข้อมูลจากชีต Case_Master
       }
     }
 
@@ -667,40 +744,12 @@
       document.getElementById(ids[currentStep-1]).classList.remove('hidden');
     }
 
-    // ===== SUBMIT: ส่งจริงเข้า Google Sheet ผ่าน Apps Script =====
-    async function submitReport(e){
+    function submitReport(e){
       e.preventDefault();
-
-      const payload = {
-        action: 'create',
-        Category: (selectedCategory || '').trim(),
-        SubCategory: (selectedSubCategory || '').trim(),
-        Detail: document.querySelector('#detailsStep textarea')?.value?.trim() || '',
-        Location: document.getElementById('locationInput')?.value?.trim() || '',
-        EmpId: document.getElementById('employeeCode')?.value?.trim() || '1234',
-        EmpName: document.getElementById('employeeName')?.value?.trim() || '',
-        Dept: document.getElementById('employeeDept')?.value?.trim() || '',
-        Phone: document.getElementById('employeePhone')?.value?.trim() || ''
-      };
-
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true; btn.textContent = 'กำลังส่ง...';
-
-      try{
-        const result = await apiPost(payload);
-        if(!result.ok) throw new Error(result.error || 'ส่งข้อมูลไม่สำเร็จ');
-
-        document.getElementById('referenceNumber').textContent = result.caseId;
-
-        document.getElementById('detailsStep').classList.add('hidden');
-        document.getElementById('successStep').classList.remove('hidden');
-        document.getElementById('step4').classList.remove('active');
-        currentStep = 5;
-      }catch(err){
-        alert('เกิดข้อผิดพลาด: ' + err.message);
-      }finally{
-        btn.disabled = false; btn.textContent = 'ส่งรายงาน →';
-      }
+      const rand = String(Math.floor(Math.random()*1000)).padStart(3,'0');
+      const year = new Intl.DateTimeFormat('en-TH', { timeZone:'Asia/Bangkok', year:'numeric' }).format(new Date());
+      document.getElementById('referenceNumber').textContent = `HR-${year}-${rand}`;
+      nextStep();
     }
 
     function resetForm(){
@@ -728,26 +777,16 @@
 
     function viewFactoryDetails(factoryId){ showHRBPLogin(); window.selectedFactory=factoryId; }
 
-    // ===== History (เชื่อมจริง) =====
-    async function verifyHistoryAccess(e){
+    // ===== History (demo) =====
+    function verifyHistoryAccess(e){
       e.preventDefault();
       const id = document.getElementById('historyEmployeeId').value.trim();
-      if(!id){ alert('กรุณากรอกรหัสพนักงาน'); return; }
-
-      try{
-        const result = await apiGet({ action:'listByEmp', empId: id });
-        if(!result.ok) throw new Error(result.error || 'ไม่สามารถดึงข้อมูลได้');
-
+      if(id==='1234'){
         isHistoryLoggedIn = true;
         document.getElementById('historyLoginSection').classList.add('hidden');
         document.getElementById('historyContent').classList.remove('hidden');
-
-        renderLatestCases_(result.rows || []);
-      }catch(err){
-        alert('เกิดข้อผิดพลาด: ' + err.message);
-      }
+      } else alert('รหัสพนักงานไม่ถูกต้อง กรุณาลองใหม่');
     }
-
     function logoutHistory(){
       isHistoryLoggedIn = false;
       document.getElementById('historyLoginSection').classList.remove('hidden');
@@ -756,61 +795,14 @@
       document.getElementById('searchResults').classList.add('hidden');
     }
 
-    function renderLatestCases_(rows){
-      const wrap = document.querySelector('#historyContent .space-y-4');
-      if(!wrap) return;
-      wrap.innerHTML = '';
-
-      rows.slice(0, 5).forEach(r => {
-        const typeColor = r.Category === 'การเลิกจ้าง' ? 'red'
-                        : r.Category === 'อุบัติเหตุ' ? 'orange'
-                        : r.Category === 'ความปลอดภัย' ? 'yellow'
-                        : 'purple';
-
-        const statusPill = r.Status === 'เสร็จสิ้น'
-          ? `<span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">เสร็จสิ้น</span>`
-          : `<span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">รอดำเนินการ</span>`;
-
-        const card = document.createElement('div');
-        card.className = `bg-gradient-to-r from-${typeColor}-50 to-${typeColor}-100 rounded-xl p-6 border-l-4 border-${typeColor}-500`;
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <h4 class="text-lg font-bold text-gray-800 mb-2">${r.CaseId} - ${r.Category}</h4>
-              <p class="text-gray-600 mb-2">ประเภทย่อย: ${r.SubCategory || '-'} | วันที่: ${r.Timestamp || '-'}</p>
-              <p class="text-sm text-gray-500">รายละเอียด: ${r.Detail || '-'}</p>
-            </div>
-            <div class="flex flex-col gap-2">
-              ${statusPill}
-              <button onclick="viewCaseHistory('${r.CaseId}')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">ดูรายละเอียด</button>
-              ${r.Status !== 'เสร็จสิ้น' ? `<button onclick="closeCaseByEmployee('${r.CaseId}')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">ปิดเคส</button>` : ''}
-            </div>
-          </div>`;
-        wrap.appendChild(card);
-      });
-    }
-
-    async function searchByCase(){
+    function searchByCase(){
       const caseId = document.getElementById('caseSearch').value.trim();
       if(!caseId){ alert('กรุณากรอกรหัสเคส'); return; }
-
-      try{
-        const result = await apiGet({ action:'getById', caseId });
-        if(!result.ok) throw new Error(result.error || 'ไม่พบเคส');
-
-        const r = result.data;
-        const rows = [{
-          id: r.CaseId,
-          type: `${r.Category} - ${r.SubCategory || ''}`.trim(),
-          date: r.Timestamp || '',
-          status: r.Status || '',
-          employee: `${r.EmpName || ''} (${r.EmpId || ''})`,
-          details: r.Detail || ''
-        }];
-        showSearchResults(rows);
-      }catch(err){
-        alert('เกิดข้อผิดพลาด: ' + err.message);
-      }
+      const mock = {
+        'HR-2025-001': { id:'HR-2025-001', type:'การเลิกจ้าง - ลาออก', date:'19 ต.ค. 2025', status:'รอดำเนินการ', employee:'นายสมชาย ใจดี (1234)', details:'พนักงานแผนกผลิตขอลาออกด้วยเหตุผลส่วนตัว' }
+      };
+      const result = mock[caseId.toUpperCase()];
+      if(result) showSearchResults([result]); else alert('ไม่พบเคสที่ค้นหา');
     }
 
     function showSearchResults(rows){
@@ -840,43 +832,26 @@
       box.classList.remove('hidden');
     }
 
-    async function closeCaseByEmployee(id){
-      if(!confirm(`คุณต้องการปิดเคส ${id} ใช่หรือไม่?`)) return;
-      try{
-        const result = await apiPost({ action:'close', caseId: id });
-        if(!result.ok) throw new Error(result.error || 'ปิดเคสไม่สำเร็จ');
-        alert(`ปิดเคส ${id} แล้ว`);
-      }catch(err){
-        alert('เกิดข้อผิดพลาด: ' + err.message);
-      }
-    }
+    function viewCaseHistory(id){ viewCase(id); }
+    function closeCaseByEmployee(id){ if(confirm(`คุณต้องการปิดเคส ${id} ใช่หรือไม่?`)){ alert(`เคส ${id} ได้รับการปิดเรียบร้อยแล้ว (เดโม)`); } }
 
-    async function viewCaseHistory(caseId){
-      try{
-        const result = await apiGet({ action:'getById', caseId });
-        if(!result.ok) throw new Error(result.error || 'ไม่พบเคส');
-        const r = result.data;
-
-        const title = document.getElementById('caseTitle');
-        const content = document.getElementById('caseContent');
-        const modal = document.getElementById('caseModal');
-
-        title.textContent = `${r.CaseId} - ${r.Category}${r.SubCategory ? ' - ' + r.SubCategory : ''}`;
-        content.innerHTML = `
-          <div class="grid md:grid-cols-2 gap-4">
-            <div><strong>สถานะ:</strong> ${r.Status || '-'}</div>
-            <div><strong>ระดับ:</strong> <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">${inferPriority_(r.Category) || '—'}</span></div>
-            <div><strong>สถานที่:</strong> ${r.Location || '-'}</div>
-            <div><strong>วันที่:</strong> ${r.Timestamp || '-'}</div>
-            <div><strong>เวลา:</strong> ${extractTime_(r.Timestamp) || '-'}</div>
-            <div><strong>ผู้แจ้ง:</strong> ${r.EmpName || '-'} (${r.EmpId || '-'})</div>
-          </div>
-          <div class="mt-4"><strong>รายละเอียด:</strong><p class="mt-2 p-4 bg-gray-50 rounded-lg">${r.Detail || '-'}</p></div>
-        `;
-        modal.classList.remove('hidden');
-      }catch(err){
-        alert('เกิดข้อผิดพลาด: ' + err.message);
-      }
+    function viewCase(id){
+      const data = {
+        'HR-2025-001': { title:'HR-2025-001 - การเลิกจ้าง - ลาออก', priority:'ด่วน', location:'โรงงานลาดกระบัง', date:'19 ตุลาคม 2025', time:'14:30', details:'พนักงานแผนกผลิตขอลาออกด้วยเหตุผลส่วนตัว ต้องดำเนินการเอกสารและส่งมอบงาน', reporter:'คุณสมชาย ใจดี', status:'กำลังดำเนินการ' }
+      }[id];
+      if(!data) return;
+      document.getElementById('caseTitle').textContent = data.title;
+      document.getElementById('caseContent').innerHTML = `
+        <div class="grid md:grid-cols-2 gap-4">
+          <div><strong>สถานะ:</strong> ${data.status}</div>
+          <div><strong>ระดับ:</strong> <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">${data.priority}</span></div>
+          <div><strong>สถานที่:</strong> ${data.location}</div>
+          <div><strong>วันที่:</strong> ${data.date}</div>
+          <div><strong>เวลา:</strong> ${data.time}</div>
+          <div><strong>ผู้แจ้ง:</strong> ${data.reporter}</div>
+        </div>
+        <div class="mt-4"><strong>รายละเอียด:</strong><p class="mt-2 p-4 bg-gray-50 rounded-lg">${data.details}</p></div>`;
+      document.getElementById('caseModal').classList.remove('hidden');
     }
     function closeCaseModal(){ document.getElementById('caseModal').classList.add('hidden'); }
 
@@ -911,22 +886,8 @@
       if(dropdown && !dropdown.contains(e.target) && e.target!==input){ dropdown.classList.add('hidden'); }
     });
 
-    // ===== Small utils =====
-    function inferPriority_(category){
-      if (!category) return '';
-      if (/เลิกจ้าง|ร้องเรียน/.test(category)) return 'ด่วน';
-      if (/อุบัติเหตุ/.test(category)) return 'ด่วนมาก';
-      return 'ปานกลาง';
-    }
-    function extractTime_(timestamp){
-      if (!timestamp) return '';
-      const m = String(timestamp).match(/(\d{2}:\d{2}:\d{2})$/);
-      return m ? m[1] : '';
-    }
-
     // ===== Init =====
     showPage('report');
-    console.log('[HR Incident] API_URL:', API_URL);
   </script>
 </body>
 </html>
