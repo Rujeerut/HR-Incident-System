@@ -593,7 +593,10 @@
     rows.forEach((cat, i) => {
       const tone = palette[i % palette.length];
       const btn = document.createElement('button');
-      btn.className = `card-hover bg-gradient-to-br from-white to-${tone}-50 rounded-xl shadow-lg px-6 py-6 border border-${tone}-100 hover:border-${tone}-300 hover:shadow-xl text-left transition-all duration-200`;
+      btn.className = `card-hover bg-gradient-to-br from-white to-${tone}-50 
+      rounded-xl shadow-lg px-6 py-6 border border-${tone}-100 
+      hover:border-${tone}-300 hover:shadow-xl text-left 
+      transition-all duration-200 min-h-[120px] flex flex-col justify-center `;
       btn.innerHTML = `
         <div class="text-center">
           <h3 class="text-base font-bold text-gray-800 mb-1">${escapeHTML_(cat.th)}</h3>
