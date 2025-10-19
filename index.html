@@ -507,34 +507,7 @@
     let isHRBPLoggedIn = false;
     let isHistoryLoggedIn = false;
 
-    // ===== Sub-categories =====
-    const subCategories = {
-      termination: [
-        { id: 'resignation', name: 'ลาออก', icon: '📝', desc: 'พนักงานขอลาออกด้วยตนเอง' },
-        { id: 'dismissal',  name: 'เลิกจ้าง', icon: '❌', desc: 'บริษัทเลิกจ้างพนักงาน' },
-        { id: 'transfer',   name: 'โอนย้าย', icon: '🔄', desc: 'โอนย้ายแผนก/สาขา' },
-        { id: 'retirement', name: 'เกษียณ', icon: '👴', desc: 'เกษียณอายุราชการ' }
-      ],
-      accident: [
-        { id: 'injury',   name: 'บาดเจ็บ',   icon: '🩹', desc: 'อุบัติเหตุที่ทำให้บาดเจ็บ' },
-        { id: 'cut',      name: 'มีดบาด',   icon: '🔪', desc: 'บาดเจ็บจากของมีคม' },
-        { id: 'electric', name: 'ไฟช็อต',   icon: '⚡', desc: 'ไฟฟ้าดูด/ช็อต' },
-        { id: 'fall',     name: 'ล้มหกล้ม', icon: '🤕', desc: 'ล้ม หกล้ม ตกจากที่สูง' },
-        { id: 'burn',     name: 'ไฟไหม้',   icon: '🔥', desc: 'ไฟไหม้ หรือ ถูกของร้อน' },
-        { id: 'chemical', name: 'สารเคมี',  icon: '☣️', desc: 'สัมผัสสารเคมีอันตราย' }
-      ],
-      safety: [
-        { id: 'equipment',  name: 'อุปกรณ์ป้องกัน',      icon: '🦺', desc: 'ปัญหาอุปกรณ์ความปลอดภัย' },
-        { id: 'procedure',  name: 'ขั้นตอนปฏิบัติ',       icon: '📋', desc: 'ไม่ปฏิบัติตามขั้นตอน' },
-        { id: 'environment',name: 'สภาพแวดล้อม',         icon: '🏭', desc: 'สภาพแวดล้อมไม่ปลอดภัย' }
-      ],
-      complaint: [
-        { id: 'harassment',    name: 'การล่วงละเมิด',            icon: '🚫', desc: 'การล่วงละเมิดทางเพศ/คำพูด' },
-        { id: 'discrimination',name: 'การเลือกปฏิบัติ',          icon: '⚖️', desc: 'เลือกปฏิบัติไม่เป็นธรรม' },
-        { id: 'workplace',     name: 'สภาพแวดล้อมการทำงาน',      icon: '🏢', desc: 'ปัญหาสภาพแวดล้อมทำงาน' },
-        { id: 'management',    name: 'การจัดการ',                icon: '👔', desc: 'ปัญหาการจัดการ/บังคับบัญชา' }
-      ]
-    };
+    let selectedSubCategoryName = '';
 
     // ===== Page router =====
     function showPage(page) {
@@ -667,6 +640,75 @@
 function hideLoading(){
   document.getElementById('loadingModal').classList.add('hidden');
 }
+  async function loadSubCategories(catTH, opts = {}) {
+  const silent = !!opts.silent;
+  const container = document.getElementById('subCategoryCards');
+  container.innerHTML = ''; // เคลียร์เดิมก่อน
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+  try{
+    // เรียก action=subcategories โดยส่ง cat=ชื่อหมวดภาษาไทย
+    const url = API_URL + '?' + new URLSearchParams({ action:'subcategories', cat:catTH }).toString();
+    const res = await fetch(url, { method:'GET', signal: controller.signal, cache:'no-cache' });
+    clearTimeout(timeoutId);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rs = await res.json();
+    if(!rs.ok) throw new Error(rs.error || 'โหลดประเภทย่อยไม่สำเร็จ');
+
+    const rows = rs.rows || [];
+    renderSubCategoryCards(rows);
+
+    return rows;
+  }catch(err){
+    clearTimeout(timeoutId);
+    // แสดง error สั้น ๆ ที่ Step 3 ถ้าต้องการ
+    const scTitle = document.getElementById('subCategoryTitle');
+    scTitle.textContent = 'เกิดข้อผิดพลาดในการโหลดประเภทย่อย';
+    document.getElementById('subCategoryCards').innerHTML =
+      `<div class="text-center text-sm text-red-600"> ${String(err.message || err)} </div>`;
+    return [];
+  }
+}
+
+function renderSubCategoryCards(rows){
+  const container = document.getElementById('subCategoryCards');
+  container.innerHTML = '';
+
+  if (!rows.length) {
+    container.innerHTML = `<div class="text-center text-gray-600 text-sm">ไม่พบประเภทย่อยสำหรับหมวดนี้</div>`;
+    return;
+  }
+
+  // โทนสีเดียวกับหน้าแรก (หมวดหลัก)
+  const palette = ['blue','orange','yellow','purple','pink','green','indigo'];
+
+  const frag = document.createDocumentFragment();
+  rows.forEach((r, i) => {
+    const tone = palette[i % palette.length];
+
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className =
+      `card-hover bg-gradient-to-br from-white to-${tone}-50
+       rounded-2xl shadow-xl p-6 border border-${tone}-100
+       hover:border-${tone}-300 hover:shadow-2xl
+       h-[130px] w-full flex items-center justify-center text-center transition`;
+
+    // ไม่มีอิโมจิแล้วนะครับ
+    card.innerHTML = `
+      <div>
+        <h3 class="text-base font-semibold text-gray-800 mb-1">${escapeHTML_(r.name)}</h3>
+      </div>
+    `;
+
+    card.onclick = () => selectSubCategory(r.name);
+    frag.appendChild(card);
+  });
+
+  container.appendChild(frag);
+}
    
     // ===== Employee login (for proceeding to details) =====
     function showEmployeeLogin(){ document.getElementById('employeeModal').classList.remove('hidden'); }
@@ -679,27 +721,35 @@ function hideLoading(){
     }
 
     // ===== Category & Sub-category =====
-        function selectCategory(cat){
-      // cat มาจาก API: { th, en, slug }
-      selectedCategory   = String(cat.slug || '').trim();
-      selectedCategoryTH = String(cat.th   || '').trim();
-      selectedCategoryEN = String(cat.en   || '').trim();
+       async function selectCategory(cat){
+  // เก็บค่าหมวดที่เลือก (จาก action=categories)
+  selectedCategory   = String(cat.slug || '').trim();
+  selectedCategoryTH = String(cat.th   || '').trim();
+  selectedCategoryEN = String(cat.en   || '').trim();
+
+  // เปิด popup โหลด
+  showLoading('กำลังโหลดประเภทย่อย...');
+         
+         // เรียก API หา "ประเภทย่อย" ของหมวดนี้ (กรองตามคอลัมน์ A)
+  const subs = await loadSubCategories(selectedCategoryTH, { silent:true });
+         
+         // ปิด popup
+  hideLoading();
 
       // ถ้า slug เข้ากับแมปเดิม (termination/accident/safety/complaint) → แสดง sub
-      if (subCategories[selectedCategory] && subCategories[selectedCategory].length){
-        document.getElementById('subCategoryTitle').textContent = `เลือกประเภทย่อยของ “${selectedCategoryTH || 'หมวดหมู่'}”`;
-        showSubCategories(selectedCategory);
-
-        document.getElementById('categoryStep').classList.add('hidden');
-        document.getElementById('subCategoryStep').classList.remove('hidden');
-        document.getElementById('step2').classList.remove('active');
-        document.getElementById('step2').classList.add('completed');
-        document.getElementById('step3').classList.add('active');
-        currentStep = 3;
-      } else {
-        // ถ้า slug ไม่ตรงหรือไม่มี sub → ข้ามไปรายละเอียด
-        selectedSubCategory = '';
-        showEmployeeLogin();
+     if (subs && subs.length){
+    // มีประเภทย่อย → ไป Step 3
+    document.getElementById('subCategoryTitle').textContent = `เลือกประเภทย่อยของ “${selectedCategoryTH || 'หมวดหมู่'}”`;
+    document.getElementById('categoryStep').classList.add('hidden');
+    document.getElementById('subCategoryStep').classList.remove('hidden');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step2').classList.add('completed');
+    document.getElementById('step3').classList.add('active');
+    currentStep = 3;
+  } else {
+    // ไม่มีประเภทย่อย → ข้ามไปกรอกรายละเอียด
+    selectedSubCategoryName = '';
+    showEmployeeLogin();
       }
     }
 
@@ -715,10 +765,14 @@ function hideLoading(){
         container.appendChild(card);
       });
     }
-    function selectSubCategory(subId){ selectedSubCategory = subId; showEmployeeLogin(); }
+    function selectSubCategory(name){
+  selectedSubCategoryName = name; // เก็บชื่อจากคอลัมน์ C
+  showEmployeeLogin();
+}
 
     // ===== Details step =====
     function proceedToDetails(){
+  // ใช้ slug ที่ได้จาก categories เพื่อตั้งโทนสีไอคอน
   const icons = {
     termination:'bg-gradient-to-br from-red-400 to-red-600',
     accident:'bg-gradient-to-br from-orange-400 to-orange-600',
@@ -727,33 +781,32 @@ function hideLoading(){
     default:'bg-gradient-to-br from-blue-400 to-blue-600'
   };
 
-  const subData = (selectedCategory && subCategories[selectedCategory])
-    ? subCategories[selectedCategory].find(s=>s.id===selectedSubCategory)
-    : null;
+  // ป้ายชื่อหมวด/ย่อยจากตัวแปรที่คุณเก็บไว้แล้ว
+  const catLabel = selectedCategoryTH || 'หมวดหมู่';
+  const subLabel = selectedSubCategoryName || '';
 
-  const catLabel = selectedCategoryTH || {
-    termination:'การเลิกจ้าง', accident:'อุบัติเหตุ',
-    safety:'ความปลอดภัย', complaint:'การร้องเรียน'
-  }[selectedCategory] || 'หมวดหมู่';
-
-  const subLabel = subData ? subData.name : '';
-
-  const formTitle = subLabel ? `รายละเอียด${catLabel} - ${subLabel}` : `รายละเอียด${catLabel}`;
+  // ตั้งหัวข้อฟอร์ม
+  const formTitle = subLabel
+    ? `รายละเอียด${catLabel} - ${subLabel}`
+    : `รายละเอียด${catLabel}`;
   document.getElementById('formTitle').textContent = formTitle;
   document.getElementById('formSubtitle').textContent = subLabel
     ? `กรุณากรอกข้อมูลเกี่ยวกับ${subLabel}ให้ครบถ้วน`
     : `กรุณากรอกข้อมูลเกี่ยวกับ${catLabel}ให้ครบถ้วน`;
 
+  // สีกรอบไอคอนด้านบนของฟอร์ม (อิง slug)
   const iconBox = document.getElementById('priorityIcon');
   const colorClass = icons[selectedCategory] || icons.default;
   iconBox.className = `w-12 h-12 rounded-2xl mr-3 shadow-lg ${colorClass}`;
 
+  // เติมวันที่/เวลา
   const now = new Date();
   const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Bangkok' }).format(now);
   const timeStr = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12:false, timeZone:'Asia/Bangkok' }).format(now);
   document.getElementById('reportDate').value = dateStr;
   document.getElementById('reportTime').value = timeStr;
 
+  // เปลี่ยนสเต็ป
   document.getElementById('subCategoryStep').classList.add('hidden');
   document.getElementById('categoryStep').classList.add('hidden');
   document.getElementById('detailsStep').classList.remove('hidden');
@@ -861,7 +914,11 @@ function hideLoading(){
     }
 
     function resetForm(){
-      currentStep = 1; selectedCategory=''; selectedSubCategory='';
+      currentStep = 1;
+  selectedCategory = '';
+  selectedSubCategory = '';       // ของเก่า จะคงไว้ก็ได้
+  selectedSubCategoryName = '';
+      
       const ids = ['introStep','categoryStep','subCategoryStep','detailsStep','successStep'];
       ids.forEach((id, i)=>{
         const el = document.getElementById(id);
