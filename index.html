@@ -151,9 +151,6 @@
         <p class="text-sm text-gray-600">กรุณาเลือกประเภทเหตุการณ์ที่ต้องการแจ้ง</p>
       </div>
 
-      <!-- Loader -->
-      <div id="categoryLoading" class="text-center text-sm text-gray-600 mb-3">กำลังโหลดหมวดหมู่...</div>
-
       <!-- Dynamic grid here -->
       <div id="categoryGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto"></div>
 
@@ -612,20 +609,22 @@
     async function loadCategories(opts = {}){
   const silent = !!opts.silent;
   const grid = document.getElementById('categoryGrid');
-  const loading = document.getElementById('categoryLoading');
   const errorBox = document.getElementById('categoryError');
 
   if(!silent){
-    loading.classList.remove('hidden');
+    // ไม่มีข้อความ loader แล้ว: ซ่อน error อย่างเดียว
     errorBox.classList.add('hidden');
+    // ถ้าอยากมี skeleton ตอนไม่ silent คงไว้ได้:
+    renderCategorySkeleton();
   }
 
   const cached = getCachedCategories();
   if (cached && cached.length) {
     renderCategories(cached);
-    if(!silent) loading.classList.add('hidden');
-  } else if(!silent){
-    renderCategorySkeleton();
+    // ไม่มีอะไรต้องซ่อน เพราะเราไม่ใช้ข้อความ loader แล้ว
+    if (silent) {
+      // silent mode ก็ไม่ต้องทำอะไรเพิ่ม
+    }
   }
 
   const controller = new AbortController();
@@ -644,14 +643,11 @@
 
     renderCategories(rows);
     setCachedCategories(rows);
-
-    if(!silent) loading.classList.add('hidden');
   }catch(err){
     clearTimeout(timeoutId);
     if(!silent){
       errorBox.textContent = (err.name==='AbortError') ? 'การเชื่อมต่อช้า โปรดลองใหม่' : String(err.message || err);
       errorBox.classList.remove('hidden');
-      loading.classList.add('hidden');
     }
   }
 }
@@ -1002,14 +998,15 @@ function hideLoading(){
     showPage('report');
   </script>
   <!-- Loading Modal -->
-<div id="loadingModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] hidden">
+<!-- Loading Modal (no blur, no dim, normal text) -->
+<div id="loadingModal" class="fixed inset-0 z-[60] hidden">
   <div class="w-full h-full flex items-center justify-center">
     <div class="bg-white rounded-2xl shadow-2xl px-6 py-5 flex items-center gap-3">
-      <svg class="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none">
+      <svg class="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none" aria-label="กำลังโหลด">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" d="M4 12a8 8 0 018-8" stroke="currentColor" stroke-width="4"></path>
       </svg>
-      <span id="loadingText" class="font-semibold text-gray-800">กำลังโหลดประเภทการแจ้ง...</span>
+      <span id="loadingText" class="text-gray-800">กำลังโหลดประเภทการแจ้ง...</span>
     </div>
   </div>
 </div>
