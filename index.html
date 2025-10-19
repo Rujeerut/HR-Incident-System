@@ -508,6 +508,7 @@
     let isHistoryLoggedIn = false;
 
     let selectedSubCategoryName = '';
+    let selectedDetailName = '';
 
     // ===== Page router =====
     function showPage(page) {
@@ -671,6 +672,74 @@ function hideLoading(){
     return [];
   }
 }
+    
+   async function loadDetails(catTH, subTH){
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  try{
+    const url = API_URL + '?' + new URLSearchParams({
+      action:'details',
+      cat: catTH,
+      sub: subTH
+    }).toString();
+    const res = await fetch(url, { method:'GET', signal: controller.signal, cache:'no-cache' });
+    clearTimeout(timeoutId);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rs = await res.json();
+    if(!rs.ok) throw new Error(rs.error || 'โหลดรายละเอียดไม่สำเร็จ');
+    return rs.rows || {detail1:[],detail2:[],detail3:[],detail4:[],detail5:[]};
+  }catch(err){
+    clearTimeout(timeoutId);
+    console.error(err);
+    return {detail1:[],detail2:[],detail3:[],detail4:[],detail5:[]};
+  }
+}
+
+function renderDetailCards(groups){
+  const container = document.getElementById('subCategoryCards');
+  container.innerHTML = '';
+
+  // รวมทุก detail เข้าด้วยกัน
+  const all = [
+    ...groups.detail1,
+    ...groups.detail2,
+    ...groups.detail3,
+    ...groups.detail4,
+    ...groups.detail5
+  ].filter(Boolean);
+
+  // ถ้าไม่มีข้อมูลเลย → ไปยืนยันตัวตน
+  if (all.length === 0){
+    showEmployeeLogin();
+    return;
+  }
+
+  // ตั้งชื่อหัวข้อด้านบน
+  document.getElementById('subCategoryTitle').textContent = 
+    `เลือกหัวข้อรายละเอียดของ “${selectedSubCategoryName}”`;
+
+  // ใช้สีคละแบบเดียวกับหน้าแรก
+  const palette = ['blue','orange','yellow','purple','pink','green','indigo'];
+  const frag = document.createDocumentFragment();
+
+  all.forEach((name, i) => {
+    const tone = palette[i % palette.length];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `
+      card-hover bg-gradient-to-br from-white to-${tone}-50
+      rounded-2xl shadow-xl p-6 border border-${tone}-100
+      hover:border-${tone}-300 hover:shadow-2xl
+      h-[130px] w-full flex items-center justify-center text-center
+      transition
+    `;
+    btn.innerHTML = `<div><h4 class="text-base font-semibold text-gray-800">${escapeHTML_(name)}</h4></div>`;
+    btn.onclick = () => selectDetail(name);
+    frag.appendChild(btn);
+  });
+
+  container.appendChild(frag);
+}
 
 function renderSubCategoryCards(rows){
   const container = document.getElementById('subCategoryCards');
@@ -765,14 +834,31 @@ function renderSubCategoryCards(rows){
         container.appendChild(card);
       });
     }
-    function selectSubCategory(name){
-  selectedSubCategoryName = name; // เก็บชื่อจากคอลัมน์ C
+    async function selectSubCategory(name){
+  selectedSubCategoryName = name;
+
+  // เปิด popup โหลด
+  showLoading('กำลังโหลดรายละเอียด...');
+  const groups = await loadDetails(selectedCategoryTH, selectedSubCategoryName);
+  hideLoading();
+
+  // แสดงรายละเอียดภายใน Step 3 เดิม (เปลี่ยนการ์ดใน subCategoryCards)
+  renderDetailCards(groups);
+}
+    
+    function selectDetail(name){
+  selectedDetailName = name;
   showEmployeeLogin();
 }
 
     // ===== Details step =====
-    function proceedToDetails(){
-  // ใช้ slug ที่ได้จาก categories เพื่อตั้งโทนสีไอคอน
+   function proceedToDetails(){
+  // ชื่อหมวด/ย่อย/รายละเอียดที่ผู้ใช้เลือก
+  const catLabel = selectedCategoryTH || 'หมวดหมู่';
+  const subLabel = selectedSubCategoryName || '';
+  const detLabel = selectedDetailName || '';
+
+  // ไอคอนสีพื้นตามหมวด (ถ้า slug ไม่ตรง preset → ใช้ default)
   const icons = {
     termination:'bg-gradient-to-br from-red-400 to-red-600',
     accident:'bg-gradient-to-br from-orange-400 to-orange-600',
@@ -780,33 +866,31 @@ function renderSubCategoryCards(rows){
     complaint:'bg-gradient-to-br from-purple-400 to-purple-600',
     default:'bg-gradient-to-br from-blue-400 to-blue-600'
   };
-
-  // ป้ายชื่อหมวด/ย่อยจากตัวแปรที่คุณเก็บไว้แล้ว
-  const catLabel = selectedCategoryTH || 'หมวดหมู่';
-  const subLabel = selectedSubCategoryName || '';
-
-  // ตั้งหัวข้อฟอร์ม
-  const formTitle = subLabel
-    ? `รายละเอียด${catLabel} - ${subLabel}`
-    : `รายละเอียด${catLabel}`;
-  document.getElementById('formTitle').textContent = formTitle;
-  document.getElementById('formSubtitle').textContent = subLabel
-    ? `กรุณากรอกข้อมูลเกี่ยวกับ${subLabel}ให้ครบถ้วน`
-    : `กรุณากรอกข้อมูลเกี่ยวกับ${catLabel}ให้ครบถ้วน`;
-
-  // สีกรอบไอคอนด้านบนของฟอร์ม (อิง slug)
   const iconBox = document.getElementById('priorityIcon');
   const colorClass = icons[selectedCategory] || icons.default;
   iconBox.className = `w-12 h-12 rounded-2xl mr-3 shadow-lg ${colorClass}`;
 
-  // เติมวันที่/เวลา
-  const now = new Date();
-  const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Bangkok' }).format(now);
-  const timeStr = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12:false, timeZone:'Asia/Bangkok' }).format(now);
-  document.getElementById('reportDate').value = dateStr;
-  document.getElementById('reportTime').value = timeStr;
+  // ตั้งหัวเรื่องฟอร์ม
+  let title = `รายละเอียด${catLabel}`;
+  if (subLabel) title += ` - ${subLabel}`;
+  if (detLabel) title += ` - ${detLabel}`;
 
-  // เปลี่ยนสเต็ป
+  document.getElementById('formTitle').textContent = title;
+  document.getElementById('formSubtitle').textContent =
+    detLabel
+      ? `กรุณากรอกข้อมูลเกี่ยวกับ ${detLabel} ให้ครบถ้วน`
+      : (subLabel
+          ? `กรุณากรอกข้อมูลเกี่ยวกับ ${subLabel} ให้ครบถ้วน`
+          : `กรุณากรอกข้อมูลเกี่ยวกับ ${catLabel} ให้ครบถ้วน`);
+
+  // วันที่เวลาเริ่มต้น
+  const now = new Date();
+  document.getElementById('reportDate').value =
+    new Intl.DateTimeFormat('en-CA', { timeZone:'Asia/Bangkok' }).format(now);
+  document.getElementById('reportTime').value =
+    new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12:false, timeZone:'Asia/Bangkok' }).format(now);
+
+  // โชว์ Step 4
   document.getElementById('subCategoryStep').classList.add('hidden');
   document.getElementById('categoryStep').classList.add('hidden');
   document.getElementById('detailsStep').classList.remove('hidden');
@@ -914,21 +998,24 @@ function renderSubCategoryCards(rows){
     }
 
     function resetForm(){
-      currentStep = 1;
+  currentStep = 1;
   selectedCategory = '';
-  selectedSubCategory = '';       // ของเก่า จะคงไว้ก็ได้
+  selectedCategoryTH = '';
+  selectedCategoryEN = '';
+  selectedSubCategory = '';
   selectedSubCategoryName = '';
+  selectedDetailName = '';
       
       const ids = ['introStep','categoryStep','subCategoryStep','detailsStep','successStep'];
-      ids.forEach((id, i)=>{
-        const el = document.getElementById(id);
-        if(i===0) el.classList.remove('hidden'); else el.classList.add('hidden');
-        if(i < 4){ const st = document.getElementById(`step${i+1}`); st.classList.remove('active','completed'); }
-      });
-      document.getElementById('step1').classList.add('active');
-      document.querySelectorAll('form').forEach(f=>f.reset());
-      showPage('report');
-    }
+  ids.forEach((id, i)=>{
+    const el = document.getElementById(id);
+    if(i===0) el.classList.remove('hidden'); else el.classList.add('hidden');
+    if(i < 4){ const st = document.getElementById(`step${i+1}`); st.classList.remove('active','completed'); }
+  });
+  document.getElementById('step1').classList.add('active');
+  document.querySelectorAll('form').forEach(f=>f.reset());
+  showPage('report');
+}
 
     // ===== HRBP login & demo dashboard =====
     function showHRBPLogin(){ document.getElementById('hrbpModal').classList.remove('hidden'); }
