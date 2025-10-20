@@ -100,26 +100,24 @@
     </div>
 
     <!-- ปุ่มเมนู -->
-    <div class="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3">
-      <button onclick="showPage('report')"
-              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 text-sm sm:text-base">
-        แจ้งเหตุการณ์
-      </button>
-      <button onclick="showPage('history')"
-              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 text-sm sm:text-base">
-        History
-      </button>
-      <button onclick="showPage('dashboard')"
-              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-700 text-white rounded-xl font-semibold hover:bg-gray-800 text-sm sm:text-base">
-        Dashboard
-      </button>
-      <button onclick="showHRBPLogin()"
-              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 text-sm sm:text-base">
-        🔐 HRBP
-      </button>
-    </div>
-  </div>
-</nav>
+<div class="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3">
+  <button onclick="showPage('report')"
+          class="px-4 sm:px-6 py-1.5 sm:py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 text-sm sm:text-base">
+    แจ้งเหตุการณ์
+  </button>
+  <button onclick="showPage('history')"
+          class="px-4 sm:px-6 py-1.5 sm:py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 text-sm sm:text-base">
+    History
+  </button>
+  <button onclick="showPage('dashboard')"
+          class="px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-700 text-white rounded-xl font-semibold hover:bg-gray-800 text-sm sm:text-base">
+    Dashboard
+  </button>
+  <button onclick="showHRBPLogin()"
+          class="px-4 sm:px-6 py-1.5 sm:py-2 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 text-sm sm:text-base">
+    🔐 HRBP
+  </button>
+</div>
 
   <!-- Report Page -->
   <main id="reportPage" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -213,31 +211,32 @@
           </div>
         </div>
         <form onsubmit="submitReport(event)">
-          <!-- Date / Time Section -->
-<div class="px-4 sm:px-0 mb-4">
-  <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <!-- ช่องวันที่ -->
-      <div>
-        <div class="flex items-center justify-between mb-2">
-          <label class="block text-blue-800 font-semibold text-xs">📅 วันที่แจ้ง</label>
-          <button type="button" id="editDateBtn"
-                  class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0">แก้ไข</button>
-        </div>
-        <input type="date" id="reportDate"
-               class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-700 text-sm" readonly />
-      </div>
+          
+         <!-- วันที่และเวลาแจ้ง -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-4">
+  <h3 class="text-gray-800 font-semibold mb-3 text-sm">🕓 วันที่และเวลาแจ้ง</h3>
 
-      <!-- ช่องเวลา -->
-      <div>
-        <div class="flex items-center justify-between mb-2">
-          <label class="block text-blue-800 font-semibold text-xs">🕐 เวลาแจ้ง</label>
-          <button type="button" id="editTimeBtn"
-                  class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0">แก้ไข</button>
-        </div>
-        <input type="time" id="reportTime"
-               class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-700 text-sm" readonly />
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <!-- วันที่ -->
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <label class="block text-gray-700 font-medium text-sm">📅 วันที่แจ้ง</label>
+        <button type="button" id="editDateBtn"
+                class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
       </div>
+      <input type="date" id="reportDate"
+             class="w-full px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm" readonly />
+    </div>
+
+    <!-- เวลา -->
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <label class="block text-gray-700 font-medium text-sm">⏰ เวลาแจ้ง</label>
+        <button type="button" id="editTimeBtn"
+                class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
+      </div>
+      <input type="time" id="reportTime"
+             class="w-full px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm" readonly />
     </div>
   </div>
 </div>
