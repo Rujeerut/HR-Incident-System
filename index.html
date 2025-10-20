@@ -1121,28 +1121,46 @@ async function verifyEmployee(e){
     async function submitReport(e){
   e.preventDefault();
 
-  // ตรวจช่องรายละเอียด (จำเป็น)
+  // ✅ ตรวจช่องรายละเอียด (จำเป็น)
   const detailText = (document.getElementById('incidentDetail').value || '').trim();
-  if(!detailText){ alert('กรุณากรอกรายละเอียดเหตุการณ์'); return; }
+  if(!detailText){
+    alert('กรุณากรอกรายละเอียดเหตุการณ์');
+    return;
+  }
 
-  // ดึงค่าสนามต่างๆ จากหน้า
-  const Location   = (document.getElementById('locationInput').value || '').trim();
-  const EmpName    = (document.getElementById('employeeName').value || '').trim();
-  const EmpId      = (document.getElementById('employeeCode').value || '').trim();
-  const Dept       = (document.getElementById('employeeDepartment').value || '').trim();
-  const Phone      = (document.getElementById('employeePhone').value || '').trim();
+  // ✅ ดึงค่าสนามต่างๆ จากหน้า
+  const Location = (document.getElementById('locationInput').value || '').trim();
+  const EmpName  = (document.getElementById('employeeName').value || '').trim();
+  const EmpId    = (document.getElementById('employeeCode').value || '').trim();
+  const Dept     = (document.getElementById('employeeDepartment').value || '').trim();
+  const Phone    = (document.getElementById('employeePhone').value || '').trim();
 
-  if(!EmpId){ alert('กรุณายืนยันตัวตนผู้แจ้งก่อน (กรอก “รหัสพนักงาน”)'); return; }
+  // ✅ ตรวจว่ากรอกรหัสพนักงานครบไหม
+  if(!EmpId){
+    alert('กรุณายืนยันตัวตนผู้แจ้งก่อน (กรอก “รหัสพนักงาน”)');
+    return;
+  }
 
+  // ✅ กำหนดตัวแปรจาก Step ที่เลือก
   const Category    = selectedCategoryTH || '';
   const SubCategory = selectedSubCategoryName || '';
   const Detail      = selectedDetailName ? `${selectedDetailName} — ${detailText}` : detailText;
 
+  // ✅ ตรวจขนาดไฟล์รวมก่อนอัปโหลด
+  const total = Array.from(document.getElementById('incidentPhotos').files || [])
+    .reduce((s,f)=> s + f.size, 0);
+  if (total > MAX_TOTAL_UPLOAD) {
+    alert('ขนาดไฟล์รวมเกิน 20MB กรุณาลดจำนวน/ขนาดไฟล์');
+    return;
+  }
+
   try{
     showLoading('กำลังอัปโหลดไฟล์และสร้างเคส...');
-    // เก็บไฟล์จาก input แล้วแปลง base64
+
+    // ✅ เก็บไฟล์จาก input แล้วแปลง base64
     const Images = await collectImagesFromInput(); // [{name,mimeType,base64}, ...]
 
+    // ✅ สร้าง payload ส่งไป Apps Script
     const payload = {
       action: 'create',
       Category, SubCategory, Detail, Location,
@@ -1150,6 +1168,7 @@ async function verifyEmployee(e){
       Images
     };
 
+    // ✅ ส่งข้อมูล
     const rs = await apiPost(payload);
     hideLoading();
 
@@ -1158,10 +1177,10 @@ async function verifyEmployee(e){
       return;
     }
 
-    // โชว์เลขอ้างอิงจาก server
+    // ✅ โชว์หมายเลขอ้างอิงจาก server
     document.getElementById('referenceNumber').textContent = rs.caseId || '—';
-    // (ถ้าอยากแสดงลิงก์ไฟล์ที่อัปโหลดสำเร็จ rs.photos จะมี [{url,...}])
     nextStep();
+
   }catch(err){
     hideLoading();
     alert('อัปโหลดไม่สำเร็จ\n' + (err.message || err));
@@ -1330,30 +1349,46 @@ document.addEventListener('click', (e)=>{
 
 /** ---------- แนบรูป: พรีวิว + ตรวจสอบไฟล์ ---------- */
 const MAX_FILES = 10;
+const MAX_SIZE  = 5 * 1024 * 1024; // 5MB/ไฟล์
+const MAX_TOTAL_UPLOAD = 20 * 1024 * 1024; // 20MB รวมทุกไฟล์
 const ACCEPTED_TYPES = ['image/png','image/jpeg','image/jpg','image/heic'];
 
-document.addEventListener('change', (e)=>{
-  if (e.target && e.target.id === 'incidentPhotos'){
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.id === 'incidentPhotos') {
     const files = Array.from(e.target.files || []);
     const preview = document.getElementById('photoPreview');
     preview.innerHTML = '';
 
-    // ตรวจสอบจำนวน
-    if (files.length > MAX_FILES){
+    // จำนวนไฟล์
+    if (files.length > MAX_FILES) {
       alert(`อัปโหลดได้สูงสุด ${MAX_FILES} รูป`);
       e.target.value = '';
       return;
     }
 
+    // ขนาดรวม
+    const total = files.reduce((sum, f) => sum + f.size, 0);
+    if (total > MAX_TOTAL_UPLOAD) {
+      alert('ขนาดไฟล์รวมเกิน 20MB กรุณาลดจำนวน/ขนาดไฟล์');
+      e.target.value = '';
+      return;
+    }
+
+    // พรีวิว + ตรวจขนาด/ชนิดทีละไฟล์
     files.forEach(f => {
-      if (!/^image\//i.test(f.type)){
-        alert(`ไฟล์ "${f.name}" ไม่ใช่รูปภาพ`);
+      // เผื่อบางไฟล์เป็น octet-stream ให้เช็กนามสกุลสำรอง
+      const ext = (f.name.split('.').pop() || '').toLowerCase();
+      const mimeOk = /^image\//i.test(f.type) || ACCEPTED_TYPES.includes(f.type);
+      const extOk  = ['png','jpg','jpeg','heic'].includes(ext);
+      if (!mimeOk && !extOk) {
+        alert(`ไฟล์ "${f.name}" ไม่ใช่รูปภาพที่รองรับ`);
         return;
       }
-      if (f.size > MAX_SIZE){
+      if (f.size > MAX_SIZE) {
         alert(`ไฟล์ "${f.name}" เกิน 5MB`);
         return;
       }
+
       const url = URL.createObjectURL(f);
       const fig = document.createElement('div');
       fig.className = 'aspect-square rounded-lg overflow-hidden border border-gray-200';
@@ -1362,9 +1397,6 @@ document.addEventListener('change', (e)=>{
     });
   }
 });
-// === Image/File helpers ===
-const MAX_FILES = 10;
-const ACCEPTED_TYPES = ['image/png','image/jpeg','image/jpg','image/heic']; // เพิ่มได้ตามต้องการ
 
 function fileToBase64(file){
   return new Promise((resolve,reject)=>{
