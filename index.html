@@ -86,38 +86,40 @@
   <nav class="bg-white shadow-lg border-b-4 border-blue-600">
   <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"> <!-- px-3 บนมือถือ -->
     <div class="flex justify-between items-center py-3 sm:py-4">
-      <div class="flex items-center gap-2 sm:gap-4 min-w-0"> <!-- min-w-0 กันล้น -->
-        <!-- โลโก้ -->
-       <img src="./Logo-BJC-BigC.png"
-     alt="BJC Big C Logo"
-     class="h-8 sm:h-12 w-auto max-w-[40vw] object-contain" />
-        <!-- ข้อความหัวเว็บ -->
-        <div class="min-w-0">
-          <h1 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight truncate">
-            HR Incident Reporting
-          </h1>
-          <p class="text-xs sm:text-sm text-gray-600 truncate">ระบบแจ้งเหตุการณ์ทรัพยากรบุคคล</p>
-        </div>
-      </div>
-
-      <!-- ปุ่มเมนู: ย่อขนาดบนมือถือ -->
-      <div class="flex gap-1.5 sm:gap-2 shrink-0"> <!-- shrink-0 กันถูกบีบ/ซ้อน -->
-        <button onclick="showPage('report')"
-          class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base
-                 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">แจ้งเหตุการณ์</button>
-        <button onclick="showPage('history')"
-          class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base
-                 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">History</button>
-        <button onclick="showPage('dashboard')"
-          class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base
-                 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-semibold">Dashboard</button>
-        <button onclick="showHRBPLogin()"
-          class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base
-                 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">🔐 HRBP</button>
-      </div>
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4 py-3 sm:py-4">
+  <!-- โลโก้ + ชื่อเว็บ -->
+  <div class="flex items-center gap-2 sm:gap-4 min-w-0 order-1 w-full sm:w-auto">
+    <img src="./Logo-BJC-BigC.png"
+         alt="BJC Big C Logo"
+         class="h-8 sm:h-12 w-auto max-w-[40vw] object-contain" />
+    <div class="min-w-0">
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight truncate">
+        HR Incident Reporting
+      </h1>
+      <p class="text-xs sm:text-sm text-gray-600 truncate">ระบบแจ้งเหตุการณ์ทรัพยากรบุคคล</p>
     </div>
   </div>
-</nav>
+
+  <!-- ปุ่มเมนู -->
+  <div class="order-2 w-full sm:w-auto flex gap-1.5 sm:gap-2 mt-2 sm:mt-0 justify-between sm:justify-end">
+    <button onclick="showPage('report')"
+      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+      แจ้งเหตุการณ์
+    </button>
+    <button onclick="showPage('history')"
+      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
+      History
+    </button>
+    <button onclick="showPage('dashboard')"
+      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-semibold">
+      Dashboard
+    </button>
+    <button onclick="showHRBPLogin()"
+      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">
+      🔐 HRBP
+    </button>
+  </div>
+</div>
 
   <!-- Report Page -->
   <main id="reportPage" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -211,28 +213,28 @@
           </div>
         </div>
         <form onsubmit="submitReport(event)">
-          <!-- Date / Time -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-  <div class="bg-blue-50 rounded-lg p-3 border border-blue-200 min-w-0 overflow-hidden">
-    <div class="flex items-center justify-between mb-2">
-      <label class="block text-blue-800 font-semibold text-xs">📅 วันที่แจ้ง</label>
-      <button type="button" id="editDateBtn"
-              class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0">แก้ไข</button>
+          <!-- Date / Time (ใส่กรอบนอกให้เว้นซ้าย-ขวาพอดีกับกล่องอื่น) -->
+<div class="bg-blue-50 rounded-lg p-4 mb-4 border border-blue-200">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <label class="block text-blue-800 font-semibold text-xs">📅 วันที่แจ้ง</label>
+        <button type="button" id="editDateBtn"
+                class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0">แก้ไข</button>
+      </div>
+      <input type="date" id="reportDate"
+             class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-700 text-sm" readonly />
     </div>
-    <input type="date" id="reportDate"
-           class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-700 text-sm"
-           readonly />
-  </div>
 
-  <div class="bg-blue-50 rounded-lg p-3 border border-blue-200 min-w-0 overflow-hidden">
-    <div class="flex items-center justify-between mb-2">
-      <label class="block text-blue-800 font-semibold text-xs">🕐 เวลาแจ้ง</label>
-      <button type="button" id="editTimeBtn"
-              class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0">แก้ไข</button>
+    <div>
+      <div class="flex items-center justify-between mb-2">
+        <label class="block text-blue-800 font-semibold text-xs">🕐 เวลาแจ้ง</label>
+        <button type="button" id="editTimeBtn"
+                class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0">แก้ไข</button>
+      </div>
+      <input type="time" id="reportTime"
+             class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-700 text-sm" readonly />
     </div>
-    <input type="time" id="reportTime"
-           class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-700 text-sm"
-           readonly />
   </div>
 </div>
 
