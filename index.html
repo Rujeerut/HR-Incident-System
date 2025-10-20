@@ -264,45 +264,73 @@
   </div>
 </div>
               
-              <!-- 🆕 HRBP Information Section -->
-<div class="sm:col-span-2">
-  <h4 class="text-gray-800 font-semibold mt-2 mb-2 text-sm border-b border-gray-300 pb-1">
+         <!-- HR Business Partner ประจำพื้นที่ (ทำให้หน้าตา/ขนาดเท่ากับข้อมูลผู้แจ้ง) -->
+<div class="bg-gray-50 rounded-lg p-4 mb-6 border border-gray-200">  <!-- mb-6 => เว้นช่องระหว่างกล่องนี้กับส่วนถัดไป -->
+  <h4 class="text-gray-800 font-semibold mb-3 text-sm flex items-center gap-2">
     HR Business Partner ประจำพื้นที่
   </h4>
+
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <div>
       <label class="block text-gray-700 font-semibold mb-1 text-xs">HRBP Name</label>
-      <input type="text" id="assignedHRBP" readonly class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 cursor-not-allowed text-sm" />
+      <input type="text" id="assignedHRBP" readonly
+             class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed" />
     </div>
     <div>
       <label class="block text-gray-700 font-semibold mb-1 text-xs">HRBP Email</label>
-      <input type="text" id="assignedHRBPEmail" readonly class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 cursor-not-allowed text-sm" />
+      <input type="text" id="assignedHRBPEmail" readonly
+             class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed" />
     </div>
   </div>
 </div>
 
           <!-- Incident details -->
-          <div class="bg-yellow-50 rounded-lg p-4 mb-4 border border-yellow-200">
-            <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
-              <svg class="w-4 h-4 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              รายละเอียดเหตุการณ์
-            </h3>
-            <div class="mb-3">
-              <label class="block text-gray-700 font-semibold mb-1 text-xs">รายละเอียดเหตุการณ์ *</label>
-              <textarea required rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" placeholder="กรุณาระบุรายละเอียดเหตุการณ์ให้ชัดเจน เช่น สถานที่เกิดเหตุ, ผู้เกี่ยวข้อง, สาเหตุ"></textarea>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div class="relative">
-                <label class="block text-gray-700 font-semibold mb-1 text-xs">สถานที่เกิดเหตุ</label>
-                <input type="text" id="locationInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" placeholder="พิมพ์เพื่อค้นหาสถานที่..." oninput="searchLocation(this.value)" autocomplete="off" />
-                <div id="locationDropdown" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto"></div>
-              </div>
-              <div>
-                <label class="block text-gray-700 font-semibold mb-1 text-xs">ผู้เกี่ยวข้อง</label>
-                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" placeholder="ชื่อผู้เกี่ยวข้อง (ถ้ามี)" />
-              </div>
-            </div>
-          </div>
+          <div class="bg-yellow-50 rounded-lg p-4 mt-4 mb-4 border border-yellow-200">
+  <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
+    <svg class="w-4 h-4 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+    </svg>
+    รายละเอียดเหตุการณ์
+  </h3>
+
+  <!-- รายละเอียด -->
+  <div class="mb-3">
+    <label class="block text-gray-700 font-semibold mb-1 text-xs">รายละเอียดเหตุการณ์ *</label>
+    <textarea id="incidentDetail" required rows="4"
+      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+      placeholder="กรุณาระบุรายละเอียดเหตุการณ์ให้ชัดเจน เช่น สถานที่เกิดเหตุ, ผู้เกี่ยวข้อง, สาเหตุ"></textarea>
+  </div>
+
+  <!-- สถานที่เกิดเหตุ: พิมพ์ได้ + มีรายการแนะนำจากชีต -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div class="relative">
+      <label class="block text-gray-700 font-semibold mb-1 text-xs">สถานที่เกิดเหตุ</label>
+      <input type="text" id="locationInput"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+        placeholder="พิมพ์เพื่อค้นหาสถานที่..." autocomplete="off" oninput="typeaheadLocation(this.value)" />
+      <div id="locationDropdown"
+        class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto"></div>
+    </div>
+
+    <!-- ผู้เกี่ยวข้อง (เหมือนเดิม) -->
+    <div>
+      <label class="block text-gray-700 font-semibold mb-1 text-xs">ผู้เกี่ยวข้อง</label>
+      <input type="text"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+        placeholder="ชื่อผู้เกี่ยวข้อง (ถ้ามี)" />
+    </div>
+  </div>
+
+  <!-- แนบรูปภาพ -->
+  <div class="mt-4">
+    <label class="block text-gray-700 font-semibold mb-1 text-xs">แนบรูปภาพ (ถ้ามี)</label>
+    <input type="file" id="incidentPhotos" accept="image/*" multiple
+      class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+    <!-- Preview -->
+    <div id="photoPreview" class="mt-3 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2"></div>
+    <p class="text-xs text-gray-500 mt-1">รองรับไฟล์ .jpg, .png, .heic ขนาดไม่เกิน 5MB ต่อไฟล์ (สูงสุด 10 รูป)</p>
+  </div>
+</div>
 
           <div class="flex gap-3">
             <button type="button" onclick="goBack()" class="px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 text-sm">← ย้อนกลับ</button>
@@ -1208,36 +1236,90 @@ async function verifyEmployee(e){
     }
     function closeCaseModal(){ document.getElementById('caseModal').classList.add('hidden'); }
 
-    // ===== Location quick search (demo list) =====
-    const locations = [
-      'โรงงานลาดกระบัง - แผนกผลิต','โรงงานลาดกระบัง - แผนกบรรจุ','โรงงานลาดกระบัง - แผนกคลังสินค้า',
-      'โรงงานบางนา - แผนกผลิต','โรงงานบางนา - แผนกควบคุมคุณภาพ',
-      'โรงงานสมุทรปราการ - แผนกผลิต','โรงงานสมุทรปราการ - แผนกบรรจุ',
-      'โรงงานชลบุรี - แผนกผลิต','โรงงานชลบุรี - แผนกคลังสินค้า',
-      'สำนักงานใหญ่ - แผนกบัญชี','สำนักงานใหญ่ - แผนกทรัพยากรบุคคล','สำนักงานใหญ่ - แผนกการตลาด',
-      'ลานจอดรถ','ห้องประชุม A','ห้องประชุม B','โรงอาหาร','ห้องน้ำชั้น 1','ห้องน้ำชั้น 2','บันไดหนีไฟ','ลิฟต์ A','ลิฟต์ B'
-    ];
-    function searchLocation(q){
-      const dropdown = document.getElementById('locationDropdown');
-      const input = document.getElementById('locationInput');
-      if(!q){ dropdown.classList.add('hidden'); return; }
-      const items = locations.filter(s=>s.toLowerCase().includes(q.toLowerCase()));
-      if(items.length===0){ dropdown.classList.add('hidden'); return; }
-      dropdown.innerHTML = '';
-      items.forEach(loc => {
-        const div = document.createElement('div');
-        div.className = 'px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-b-0';
-        div.textContent = loc;
-        div.onclick = () => { input.value = loc; dropdown.classList.add('hidden'); };
-        dropdown.appendChild(div);
-      });
-      dropdown.classList.remove('hidden');
-    }
-    document.addEventListener('click', (e)=>{
-      const dropdown = document.getElementById('locationDropdown');
-      const input = document.getElementById('locationInput');
-      if(dropdown && !dropdown.contains(e.target) && e.target!==input){ dropdown.classList.add('hidden'); }
+    /** ---------- สถานที่เกิดเหตุ: โหลดจากชีต + แคช --------- */
+let _LOCATIONS = null; // แคชในหน้านี้
+async function ensureLocations(){
+  if (Array.isArray(_LOCATIONS)) return _LOCATIONS;
+  try{
+    const rs = await apiGet({ action:'locations' });
+    _LOCATIONS = (rs.ok ? rs.rows : []) || [];
+  }catch{ _LOCATIONS = []; }
+  return _LOCATIONS;
+}
+
+let _locDebounce = 0;
+async function typeaheadLocation(q){
+  // แสดง dropdown เฉพาะตอนมีข้อความ หรือจงใจอยากเห็นลิสต์
+  const dropdown = document.getElementById('locationDropdown');
+  const input    = document.getElementById('locationInput');
+
+  // debounce 150ms กันกระพริบ
+  clearTimeout(_locDebounce);
+  _locDebounce = setTimeout(async () => {
+    if (!q) { dropdown.classList.add('hidden'); return; }
+
+    const items = await ensureLocations();
+    const list = items
+      .filter(v => v.toLowerCase().includes(q.toLowerCase()))
+      .slice(0, 50); // จำกัดจำนวนแสดง
+
+    if (list.length === 0){ dropdown.classList.add('hidden'); return; }
+
+    dropdown.innerHTML = '';
+    list.forEach(loc => {
+      const div = document.createElement('div');
+      div.className = 'px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-100 last:border-b-0';
+      div.textContent = loc;
+      div.onclick = () => { input.value = loc; dropdown.classList.add('hidden'); };
+      dropdown.appendChild(div);
     });
+    dropdown.classList.remove('hidden');
+  }, 150);
+}
+
+// ปิด dropdown เมื่อคลิกนอก
+document.addEventListener('click', (e)=>{
+  const dropdown = document.getElementById('locationDropdown');
+  const input = document.getElementById('locationInput');
+  if(dropdown && !dropdown.contains(e.target) && e.target!==input){
+    dropdown.classList.add('hidden');
+  }
+});
+
+/** ---------- แนบรูป: พรีวิว + ตรวจสอบไฟล์ ---------- */
+const MAX_FILES = 10;
+const MAX_SIZE  = 5 * 1024 * 1024; // 5MB
+
+document.addEventListener('change', (e)=>{
+  if (e.target && e.target.id === 'incidentPhotos'){
+    const files = Array.from(e.target.files || []);
+    const preview = document.getElementById('photoPreview');
+    preview.innerHTML = '';
+
+    // ตรวจสอบจำนวน
+    if (files.length > MAX_FILES){
+      alert(`อัปโหลดได้สูงสุด ${MAX_FILES} รูป`);
+      e.target.value = '';
+      return;
+    }
+
+    files.forEach(f => {
+      if (!/^image\//i.test(f.type)){
+        alert(`ไฟล์ "${f.name}" ไม่ใช่รูปภาพ`);
+        return;
+      }
+      if (f.size > MAX_SIZE){
+        alert(`ไฟล์ "${f.name}" เกิน 5MB`);
+        return;
+      }
+      const url = URL.createObjectURL(f);
+      const fig = document.createElement('div');
+      fig.className = 'aspect-square rounded-lg overflow-hidden border border-gray-200';
+      fig.innerHTML = `<img src="${url}" alt="" class="w-full h-full object-cover" />`;
+      preview.appendChild(fig);
+    });
+  }
+});
 
     // ===== Init =====
     showPage('report');
