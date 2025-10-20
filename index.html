@@ -335,7 +335,7 @@
           <div class="flex gap-3">
             <button type="button" onclick="goBack()" class="px-4 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 text-sm"> ย้อนกลับ</button>
             <button type="submit" id="submitBtn"
-  class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
+ class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800
          text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl text-sm">
   ยืนยันการแจ้งเหตุการณ์
 </button>
@@ -346,17 +346,30 @@
 
     <!-- Step 5: Success -->
     <section id="successStep" class="hidden fade-in max-w-md mx-auto">
-      <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
-        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">ส่งรายงานสำเร็จ</h2>
-        <p class="text-gray-600 mb-6">เรื่องของคุณได้รับการบันทึกแล้ว<br />HRBP จะติดต่อกลับภายใน 24 ชั่วโมง</p>
-        <div class="bg-blue-50 rounded-lg p-4 mb-6"><p class="text-sm text-blue-800">หมายเลขอ้างอิง: <span class="font-bold" id="referenceNumber">HR-2025-001</span></p></div>
-        <button onclick="resetForm()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">แจ้งเหตุการณ์ใหม่</button>
-      </div>
-    </section>
-  </main>
+  <div class="bg-white rounded-3xl shadow-xl p-8 text-center">
+    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+      <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+
+    <h2 class="text-2xl font-extrabold text-gray-900 mb-2">ส่งรายงานสำเร็จ</h2>
+    <p class="text-gray-600 mb-6 leading-relaxed">
+      เรื่องของคุณได้รับการบันทึกแล้ว<br/>HRBP จะติดต่อกลับภายใน 24 ชั่วโมง
+    </p>
+
+    <div class="bg-blue-50 rounded-xl px-5 py-4 mb-6 border border-blue-100">
+      <p class="text-blue-800 text-sm">
+        หมายเลขอ้างอิง: <span class="font-extrabold" id="referenceNumber">HR-2025-xxx</span>
+      </p>
+    </div>
+
+    <button onclick="resetForm()"
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 rounded-xl shadow-lg">
+      แจ้งเหตุการณ์ใหม่
+    </button>
+  </div>
+</section>
 
   <!-- History Page -->
   <section id="historyPage" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -1122,6 +1135,15 @@ async function verifyEmployee(e){
       document.getElementById(ids[currentStep-1]).classList.remove('hidden');
     }
 
+    function markAllStepsCompleted() {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('step' + i);
+    if (!el) continue;
+    el.classList.remove('active');
+    el.classList.add('completed');
+  }
+}   
+    
     async function submitReport(e){
   e.preventDefault();
 
@@ -1181,9 +1203,12 @@ async function verifyEmployee(e){
       return;
     }
 
-    // ✅ โชว์หมายเลขอ้างอิงจาก server
+    // ✅ ตั้งเลขอ้างอิงจาก server (Apps Script ควรส่ง caseId กลับมา)
     document.getElementById('referenceNumber').textContent = rs.caseId || '—';
-    nextStep();
+    
+    // ✅ ทำดวง stepper ให้เป็นสถานะสำเร็จทั้งหมด แล้วไปหน้า success
+markAllStepsCompleted();
+nextStep();   // จาก step 4 → ไป successStep
 
   }catch(err){
     hideLoading();
