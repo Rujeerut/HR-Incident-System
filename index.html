@@ -71,15 +71,10 @@
 
 /* ===== ปรับสเกลหน้าจอมือถือให้ย่อเหลือ 80% ===== */
 @media (max-width: 768px) {
-  body {
-    transform: scale(0.8);           /* ย่อทั้งหน้าลงเหลือ 80% */
-    transform-origin: top center;    /* จุดอ้างอิงการย่อ (บน-กลาง) */
-    width: 125%;                     /* ขยายพื้นที่กลับเพื่อไม่ให้เหลือช่องข้าง */
-  }
-
-  /* ปรับ margin/padding เล็กน้อยให้สวยขึ้น */
   .page-container {
-    padding: 1rem;
+    transform: scale(0.8);
+    transform-origin: top center;
+    width: 125%;
   }
 }
     
