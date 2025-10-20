@@ -82,44 +82,44 @@
   </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-  <!-- Top Navigation -->
-  <nav class="bg-white shadow-lg border-b-4 border-blue-600">
-  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"> <!-- px-3 บนมือถือ -->
-    <div class="flex justify-between items-center py-3 sm:py-4">
-      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4 py-3 sm:py-4">
-  <!-- โลโก้ + ชื่อเว็บ -->
-  <div class="flex items-center gap-2 sm:gap-4 min-w-0 order-1 w-full sm:w-auto">
-    <img src="./Logo-BJC-BigC.png"
-         alt="BJC Big C Logo"
-         class="h-8 sm:h-12 w-auto max-w-[40vw] object-contain" />
-    <div class="min-w-0">
-      <h1 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight truncate">
-        HR Incident Reporting
-      </h1>
-      <p class="text-xs sm:text-sm text-gray-600 truncate">ระบบแจ้งเหตุการณ์ทรัพยากรบุคคล</p>
+  <!-- Header -->
+<nav class="w-full bg-white px-4 sm:px-8 py-3 sm:py-4 shadow-sm">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-6">
+    
+    <!-- โลโก้ + ชื่อระบบ -->
+    <div class="flex items-center gap-3 sm:gap-4 justify-center sm:justify-start">
+      <img src="./Logo-BJC-BigC.png"
+           alt="BJC Big C Logo"
+           class="h-10 sm:h-12 w-auto object-contain" />
+      <div class="text-center sm:text-left">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight">
+          HR Incident Reporting System
+        </h1>
+        <p class="text-xs sm:text-sm text-gray-600">ระบบแจ้งเหตุการณ์ทรัพยากรบุคคล</p>
+      </div>
+    </div>
+
+    <!-- ปุ่มเมนู -->
+    <div class="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3">
+      <button onclick="showPage('report')"
+              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 text-sm sm:text-base">
+        แจ้งเหตุการณ์
+      </button>
+      <button onclick="showPage('history')"
+              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 text-sm sm:text-base">
+        History
+      </button>
+      <button onclick="showPage('dashboard')"
+              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-700 text-white rounded-xl font-semibold hover:bg-gray-800 text-sm sm:text-base">
+        Dashboard
+      </button>
+      <button onclick="showHRBPLogin()"
+              class="px-4 sm:px-6 py-1.5 sm:py-2 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700 text-sm sm:text-base">
+        🔐 HRBP
+      </button>
     </div>
   </div>
-
-  <!-- ปุ่มเมนู -->
-  <div class="order-2 w-full sm:w-auto flex gap-1.5 sm:gap-2 mt-2 sm:mt-0 justify-between sm:justify-end">
-    <button onclick="showPage('report')"
-      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
-      แจ้งเหตุการณ์
-    </button>
-    <button onclick="showPage('history')"
-      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
-      History
-    </button>
-    <button onclick="showPage('dashboard')"
-      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-semibold">
-      Dashboard
-    </button>
-    <button onclick="showHRBPLogin()"
-      class="px-3 sm:px-5 py-1.5 sm:py-2 text-sm sm:text-base bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">
-      🔐 HRBP
-    </button>
-  </div>
-</div>
+</nav>
 
   <!-- Report Page -->
   <main id="reportPage" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
