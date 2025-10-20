@@ -588,13 +588,38 @@
       return res.json();
     }
     async function apiPost(payload) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    // สำคัญ: ไม่ใส่ headers เลย เพื่อหลีกเลี่ยง preflight CORS
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  // 1) พยายามส่งแบบ JSON (text/plain) ก่อน – ไม่มี header เพื่อเลี่ยง preflight
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 30000); // 30s timeout (ไฟล์ใหญ่)
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+      cache: 'no-cache',
+      // no headers -> simple request
+      // mode: 'cors' (ค่าเริ่มต้นอยู่แล้ว)
+    });
+    clearTimeout(t);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    clearTimeout(t);
+    // 2) Fallback: ส่งเป็น multipart/form-data (ปลอดภัยเรื่อง CORS เช่นกัน)
+    //    แนบ JSON เป็นฟิลด์ชื่อ "payload"
+    const fd = new FormData();
+    fd.append('payload', JSON.stringify(payload));
+
+    // หมายเหตุ: ถ้าอยากแนบรูปแบบเดิม (base64) ก็ไม่ต้องเปลี่ยน payload เลย
+    const res2 = await fetch(API_URL, {
+      method: 'POST',
+      body: fd,
+      cache: 'no-cache'
+    });
+    if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
+    // ฝั่ง Apps Script จะ parse e.parameter.payload ให้
+    return await res2.json();
+  }
 }
     // ===== Global state =====
     let currentStep = 1;
@@ -930,9 +955,9 @@ async function verifyEmployee(e){
     closeEmployeeModal();
     proceedToDetails();
   } catch(err){
-    hideLoading();
-    alert('เกิดข้อผิดพลาดในการเชื่อมต่อระบบ\n' + err.message);
-  }
+  hideLoading();
+  const msg = (err && err.message) ? err.message : String(err);
+  alert('อัปโหลดไม่สำเร็จ\n' + msg + '\n\n(ถ้าขึ้น AbortError ให้ลองใหม่/เน็ตช้า)');
 }
 
     // ===== Category & Sub-category =====
