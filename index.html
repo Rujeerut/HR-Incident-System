@@ -588,14 +588,14 @@
       return res.json();
     }
     async function apiPost(payload) {
-      const res = await fetch(API_URL, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res.json();
-    }
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    // สำคัญ: ไม่ใส่ headers เลย เพื่อหลีกเลี่ยง preflight CORS
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
     // ===== Global state =====
     let currentStep = 1;
     let selectedCategory = '';
