@@ -5,7 +5,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="//script.google.com">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
   <title>HR Incident Reporting System - BJC Big C</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -79,14 +78,6 @@
     .priority-medium { border-left: 6px solid #F59E0B }
     .priority-low { border-left: 6px solid #10B981 }
 
-/* ===== ปรับสเกลหน้าจอมือถือให้ย่อเหลือ 80% ===== */
-@media (max-width: 768px) {
-  .page-container {
-    transform: scale(0.8);
-    transform-origin: top center;
-    width: 125%;
-  }
-}
     
   </style>
 </head>
@@ -97,8 +88,9 @@
     <div class="flex justify-between items-center py-3 sm:py-4">
       <div class="flex items-center gap-2 sm:gap-4 min-w-0"> <!-- min-w-0 กันล้น -->
         <!-- โลโก้ -->
-        <img src="..." alt="BJC Big C Logo"
-             class="h-8 sm:h-12 w-auto max-w-[40vw] object-contain" />
+        <img src="./assets/cropped-Logo-BJC-_-BigC-2021-2048x606.png"
+     alt="BJC Big C Logo"
+     class="h-8 sm:h-12 w-auto max-w-[40vw] object-contain" />
         <!-- ข้อความหัวเว็บ -->
         <div class="min-w-0">
           <h1 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight truncate">
