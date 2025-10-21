@@ -242,8 +242,7 @@
         <form onsubmit="submitReport(event)">
           
       <!-- วันที่และเวลาแจ้ง (โค้ดหลังแก้ วิธีที่ 1) -->
-<div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200
-            sm:bg-white sm:rounded-2xl sm:shadow-sm sm:px-0">
+<div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200">
   <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
     <svg class="w-4 h-4 mr-2 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1046,8 +1045,6 @@ async function verifyEmployee(e){
   alert('อัปโหลดไม่สำเร็จ\n' + msg + '\n\n(ถ้าขึ้น AbortError ให้ลองใหม่/เน็ตช้า)');
 }
   }
-    setReadonlyStyle(document.getElementById('reportDate'), true);
-setReadonlyStyle(document.getElementById('reportTime'), true);
 
     // ===== Category & Sub-category =====
        async function selectCategory(cat){
@@ -1160,6 +1157,10 @@ setReadonlyStyle(document.getElementById('reportTime'), true);
   document.getElementById('step3').classList.add('completed');
   document.getElementById('step4').classList.add('active');
   currentStep = 4;
+
+      // ให้เริ่มต้นเป็นโหมดอ่านอย่างเดียวและหน้าตาเท่ากับช่องผู้แจ้ง
+  setReadonlyStyle(document.getElementById('reportDate'), true);
+  setReadonlyStyle(document.getElementById('reportTime'), true);
 }
 
     function goBackToCategory(){
