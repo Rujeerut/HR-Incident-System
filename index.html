@@ -263,8 +263,7 @@
                 class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
       </div>
       <input type="date" id="reportDate"
-  class="w-full h-12 md:h-auto px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm
-         mx-[2px] sm:mx-0"
+  class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
   readonly />
     </div>
 
@@ -278,8 +277,7 @@
                 class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
       </div>
      <input type="time" id="reportTime"
-  class="w-full h-12 md:h-auto px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm
-         mx-[2px] sm:mx-0"
+  class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
   readonly />
     </div>
   </div>
@@ -1048,6 +1046,8 @@ async function verifyEmployee(e){
   alert('อัปโหลดไม่สำเร็จ\n' + msg + '\n\n(ถ้าขึ้น AbortError ให้ลองใหม่/เน็ตช้า)');
 }
   }
+    setReadonlyStyle(document.getElementById('reportDate'), true);
+setReadonlyStyle(document.getElementById('reportTime'), true);
 
     // ===== Category & Sub-category =====
        async function selectCategory(cat){
@@ -1168,22 +1168,32 @@ async function verifyEmployee(e){
       document.getElementById('step3').classList.add('active');
     }
 
-    function toggleDateEdit(){
-      const el = document.getElementById('reportDate');
-      const btn = document.getElementById('editDateBtn');
-      el.readOnly = !el.readOnly;
-      el.classList.toggle('cursor-not-allowed');
-      el.classList.toggle('bg-yellow-50');
-      btn.textContent = el.readOnly ? 'แก้ไข' : 'บันทึก';
-    }
-    function toggleTimeEdit(){
-      const el = document.getElementById('reportTime');
-      const btn = document.getElementById('editTimeBtn');
-      el.readOnly = !el.readOnly;
-      el.classList.toggle('cursor-not-allowed');
-      el.classList.toggle('bg-yellow-50');
-      btn.textContent = el.readOnly ? 'แก้ไข' : 'บันทึก';
-    }
+    function setReadonlyStyle(input, isReadonly){
+  if (isReadonly){
+    input.readOnly = true;
+    input.classList.remove('bg-white','border-blue-400','focus:ring-2','focus:ring-blue-500','focus:border-transparent');
+    input.classList.add('bg-gray-100','border','border-gray-300','cursor-not-allowed');
+  } else {
+    input.readOnly = false;
+    input.classList.remove('bg-gray-100','border-gray-300','cursor-not-allowed');
+    input.classList.add('bg-white','border','border-blue-400','focus:ring-2','focus:ring-blue-500','focus:border-transparent');
+    input.focus();
+  }
+}
+
+function toggleDateEdit(){
+  const el  = document.getElementById('reportDate');
+  const btn = document.getElementById('editDateBtn');
+  setReadonlyStyle(el, !el.readOnly);      // ถ้าเดิมแก้ไข → กลับเป็นอ่านอย่างเดียว
+  btn.textContent = el.readOnly ? 'แก้ไข' : 'บันทึก';
+}
+
+function toggleTimeEdit(){
+  const el  = document.getElementById('reportTime');
+  const btn = document.getElementById('editTimeBtn');
+  setReadonlyStyle(el, !el.readOnly);
+  btn.textContent = el.readOnly ? 'แก้ไข' : 'บันทึก';
+}
 
     async function nextStep(){
   const ids = ['introStep','categoryStep','subCategoryStep','detailsStep','successStep'];
