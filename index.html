@@ -241,12 +241,13 @@
         </div>
         <form onsubmit="submitReport(event)">
           
-       <!-- วันที่และเวลาแจ้ง -->
-<div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200">
+      <!-- วันที่และเวลาแจ้ง (โค้ดหลังแก้ วิธีที่ 1) -->
+<div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200
+            sm:bg-white sm:rounded-2xl sm:shadow-sm sm:px-0">
   <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
     <svg class="w-4 h-4 mr-2 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
     วันที่และเวลาแจ้ง
   </h3>
@@ -259,11 +260,11 @@
           📅 วันที่แจ้ง
         </label>
         <button type="button" id="editDateBtn" onclick="toggleDateEdit()"
-          class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
+                class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
       </div>
       <input type="date" id="reportDate"
-        class="w-full px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm"
-        readonly />
+             class="w-full h-12 md:h-auto px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm"
+             readonly />
     </div>
 
     <!-- เวลา -->
@@ -273,14 +274,15 @@
           ⏰ เวลาแจ้ง
         </label>
         <button type="button" id="editTimeBtn" onclick="toggleTimeEdit()"
-          class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
+                class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
       </div>
       <input type="time" id="reportTime"
-        class="w-full px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm"
-        readonly />
+             class="w-full h-12 md:h-auto px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-700 text-sm"
+             readonly />
     </div>
   </div>
 </div>
+          
           <!-- Reporter info (demo autofill) -->
           <div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200">
   <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
