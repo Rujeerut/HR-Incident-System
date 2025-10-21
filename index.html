@@ -260,7 +260,7 @@ input[type="time"]{
         <form onsubmit="submitReport(event)">
           
     <!-- วันที่และเวลาแจ้ง : พื้นหลังขาว + กรอบฟ้า -->
-<div class="bg-white rounded-lg p-4 mb-4 border border-blue-200 ring-1 ring-blue-200/60">
+<div class="bg-blue-50/40 rounded-lg p-4 mb-4 border border-blue-200 ring-1 ring-blue-200/60">
   <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
     <svg class="w-4 h-4 mr-2 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -280,11 +280,12 @@ input[type="time"]{
                 class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0 ml-2 whitespace-nowrap">แก้ไข</button>
       </div>
       <input
-        type="date"
-        id="reportDate"
-        class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-800 text-sm
-               focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-        readonly />
+  type="date"
+  id="reportDate"
+  class="w-full px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-800 text-sm
+         focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+  readonly
+/>
     </div>
 
     <!-- เวลา -->
@@ -297,11 +298,12 @@ input[type="time"]{
                 class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0 ml-2 whitespace-nowrap">แก้ไข</button>
       </div>
       <input
-        type="time"
-        id="reportTime"
-        class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-gray-800 text-sm
-               focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-        readonly />
+  type="time"
+  id="reportTime"
+  class="w-full px-3 py-2 bg-blue-50 border border-blue-300 rounded-lg text-gray-800 text-sm
+         focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+  readonly
+/>
     </div>
   </div>
 </div>
@@ -1193,17 +1195,18 @@ async function verifyEmployee(e){
       document.getElementById('step3').classList.add('active');
     }
 
-    function setReadonlyStyle(input, isReadonly){
+   function setReadonlyStyle(input, isReadonly){
   if (isReadonly){
     input.readOnly = true;
-    // คงสไตล์กรอบฟ้า + พื้นหลังขาวไว้เหมือนเดิม
-    input.classList.remove('cursor-not-allowed', 'bg-gray-100', 'border-gray-300');
-    input.classList.add('bg-white','border','border-blue-300');
+    input.classList.remove('cursor-not-allowed','bg-gray-100','border-gray-300');
+    input.classList.add('bg-blue-50','border','border-blue-300');
   } else {
     input.readOnly = false;
-    // โหมดแก้ไข: ให้มีเอฟเฟกต์โฟกัสฟ้า
     input.classList.remove('bg-gray-100','border-gray-300','cursor-not-allowed');
-    input.classList.add('bg-white','border','border-blue-300','focus:ring-2','focus:ring-blue-400','focus:border-blue-400');
+    input.classList.add(
+      'bg-blue-50','border','border-blue-300',
+      'focus:ring-2','focus:ring-blue-400','focus:border-blue-400'
+    );
     input.focus();
   }
 }
