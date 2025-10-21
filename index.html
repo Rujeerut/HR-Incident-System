@@ -92,18 +92,15 @@
            alt="BJC Big C Logo"
            class="h-10 sm:h-12 w-auto object-contain" />
       <div class="text-center sm:text-left">
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight">
-  HR Incident
-  <span class="hidden sm:inline">&nbsp;</span>
-  <br class="sm:hidden">
-  Reporting System
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-800 leading-tight sm:whitespace-nowrap">
+  HR Incident<wbr> Reporting System
 </h1>
         <p class="text-xs sm:text-sm text-gray-600">ระบบแจ้งเหตุการณ์ทรัพยากรบุคคล</p>
       </div>
     </div>
 
-    <!-- ปุ่มเมนู -->
-<div class="flex flex-wrap justify-center sm:justify-end gap-2 sm:gap-3">
+   <!-- เมนูสำหรับเดสก์ท็อป (แสดงตั้งแต่ sm ขึ้นไป) -->
+<div id="desktopMenu" class="hidden sm:flex flex-wrap justify-end gap-2 sm:gap-3">
   <button onclick="showPage('report')" class="px-4 sm:px-6 py-1.5 sm:py-2 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 text-sm sm:text-base">
     แจ้งเหตุการณ์
   </button>
@@ -118,11 +115,42 @@
   </button>
 </div>
 
+<!-- ปุ่มแฮมเบอร์เกอร์สำหรับมือถือ (ซ่อนบนเดสก์ท็อป) -->
+<button
+  type="button"
+  class="sm:hidden inline-flex items-center justify-center p-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+  aria-label="เปิดเมนู"
+  onclick="toggleMobileMenu()">
+  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"/>
+  </svg>
+</button>
+
+    <!-- แผงเมนูมือถือ (เริ่มต้นซ่อน) -->
+<div id="mobileMenu" class="sm:hidden hidden bg-white border-t shadow-md px-4 py-3 space-y-2">
+  <button onclick="showPage('report'); toggleMobileMenu(false)"
+          class="w-full px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700">
+    แจ้งเหตุการณ์
+  </button>
+  <button onclick="showPage('history'); toggleMobileMenu(false)"
+          class="w-full px-4 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700">
+    History
+  </button>
+  <button onclick="showPage('dashboard'); toggleMobileMenu(false)"
+          class="w-full px-4 py-3 bg-gray-700 text-white rounded-xl font-semibold hover:bg-gray-800">
+    Dashboard
+  </button>
+  <button onclick="showHRBPLogin(); toggleMobileMenu(false)"
+          class="w-full px-4 py-3 bg-purple-600 text-white rounded-xl font-semibold hover:bg-purple-700">
+    🔐 HRBP
+  </button>
+</div>
+
     </div></nav> 
 
   <!-- Report Page -->
   <main id="reportPage" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Stepper -->
     <!-- Stepper -->
 <div class="flex items-center justify-center mb-6 sm:mb-8">
   <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 stepper">
@@ -679,6 +707,9 @@
       if (page === 'report')      document.getElementById('reportPage').classList.remove('hidden');
       else if (page === 'history')document.getElementById('historyPage').classList.remove('hidden');
       else if (page === 'dashboard') document.getElementById('dashboardPage').classList.remove('hidden');
+      // ------- เพิ่มบรรทัดใหม่เพื่อปิดเมนูมือถือถ้าเปิดอยู่ -------
+  const mm = document.getElementById('mobileMenu');
+  if (mm && !mm.classList.contains('hidden')) mm.classList.add('hidden');
     }
 
     // === CACHE CONFIG ===
@@ -1512,6 +1543,15 @@ async function collectImagesFromInput(){
 }
     // ===== Init =====
     showPage('report');
+    
+// เปิด/ปิดแผงเมนูมือถือ
+function toggleMobileMenu(nextState){
+  const panel = document.getElementById('mobileMenu');
+  const isHidden = panel.classList.contains('hidden');
+  const shouldOpen = (typeof nextState === 'boolean') ? nextState : isHidden;
+  panel.classList.toggle('hidden', !shouldOpen);
+}
+    
   </script>
   <!-- Loading Modal -->
 <!-- Loading Modal (no blur, no dim, normal text) -->
