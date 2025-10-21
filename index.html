@@ -15,6 +15,24 @@
  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* ให้กล่อง input คำนวณความกว้างแบบเดียวกับช่องอื่น */
+.input-base { box-sizing: border-box; }
+
+/* รีเซ็ตสไตล์ของ date/time บนมือถือให้ควบคุมได้เหมือน text */
+input[type="date"],
+input[type="time"]{
+  -webkit-appearance: none; /* iOS Safari */
+  appearance: none;
+}
+
+/* มือถือจอเล็ก: กันข้อความชิดขอบขวาเพราะระบบกันพื้นที่ให้ปุ่มเลือกวัน/เวลา */
+@media (max-width: 640px){
+  input[type="date"],
+  input[type="time"]{
+    padding-right: 0.75rem;  /* เท่ากับ px-3 ของ Tailwind */
+  }
+}
+    
     html, body {
   margin: 0;
   padding: 0;
@@ -259,8 +277,8 @@
           class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0 ml-2 whitespace-nowrap">แก้ไข</button>
       </div>
       <input type="date" id="reportDate"
-        class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
-        readonly />
+  class="input-base w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
+  readonly />
     </div>
 
     <!-- เวลา -->
@@ -271,8 +289,8 @@
           class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0 ml-2 whitespace-nowrap">แก้ไข</button>
       </div>
       <input type="time" id="reportTime"
-        class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
-        readonly />
+  class="input-base w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
+  readonly />
     </div>
   </div>
 </div>
