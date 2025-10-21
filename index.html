@@ -241,43 +241,38 @@
         </div>
         <form onsubmit="submitReport(event)">
           
-      <!-- วันที่และเวลาแจ้ง (โค้ดหลังแก้ วิธีที่ 1) -->
+     <!-- วันที่และเวลาแจ้ง -->
 <div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200">
   <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
     <svg class="w-4 h-4 mr-2 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
     วันที่และเวลาแจ้ง
   </h3>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
     <!-- วันที่ -->
-    <div>
+    <div class="min-w-0">
       <div class="flex items-center justify-between mb-2">
-        <label class="block text-gray-700 font-semibold mb-0.5 text-xs flex items-center gap-1">
-          📅 วันที่แจ้ง
-        </label>
+        <label class="block text-gray-700 font-semibold mb-0.5 text-xs flex items-center gap-1">📅 วันที่แจ้ง</label>
         <button type="button" id="editDateBtn" onclick="toggleDateEdit()"
-                class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
+          class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0 ml-2 whitespace-nowrap">แก้ไข</button>
       </div>
       <input type="date" id="reportDate"
-  class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
-  readonly />
+        class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
+        readonly />
     </div>
 
     <!-- เวลา -->
-    <div>
+    <div class="min-w-0">
       <div class="flex items-center justify-between mb-2">
-        <label class="block text-gray-700 font-semibold mb-0.5 text-xs flex items-center gap-1">
-          ⏰ เวลาแจ้ง
-        </label>
+        <label class="block text-gray-700 font-semibold mb-0.5 text-xs flex items-center gap-1">⏰ เวลาแจ้ง</label>
         <button type="button" id="editTimeBtn" onclick="toggleTimeEdit()"
-                class="text-xs text-blue-600 hover:text-blue-800 underline">แก้ไข</button>
+          class="text-xs text-blue-600 hover:text-blue-800 underline shrink-0 ml-2 whitespace-nowrap">แก้ไข</button>
       </div>
-     <input type="time" id="reportTime"
-  class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
-  readonly />
+      <input type="time" id="reportTime"
+        class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 text-sm cursor-not-allowed"
+        readonly />
     </div>
   </div>
 </div>
